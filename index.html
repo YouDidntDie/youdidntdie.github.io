@@ -21,6 +21,7 @@
       height: 100vh;
       box-sizing: border-box;
       white-space: pre-wrap;
+      overflow-y: auto;
     }
 
     .cursor {
@@ -34,36 +35,104 @@
       0%, 100% { opacity: 0; }
       50% { opacity: 1; }
     }
+
+    .input-line {
+      display: inline;
+    }
   </style>
 </head>
 <body>
-  <div id="terminal">> Booting survival module...<span class="cursor"></span></div>
+  <div id="terminal"></div>
 
   <script>
     const terminal = document.getElementById("terminal");
+    const promptSymbol = "> ";
 
-    const lines = [
-      "> Booting survival module...",
-      "> You didn't die.",
-      "> Now what?",
-      "> Loading: The guide to not screwing up again...",
-      "> Type 'help' to begin."
+    const banner = [
+      "Welcome to the Survival Interface.",
+      "You didn't die. Now what?",
+      "Type 'help' for available commands."
     ];
 
-    let index = 0;
+    const commands = {
+      help: [
+        "Available commands:",
+        " - help: Show this help message",
+        " - status: Check your survival status",
+        " - tip: Get a random survival tip",
+        " - clear: Clear the terminal"
+      ],
+      status: [
+        "Vitals: Stable",
+        "Radiation: Low",
+        "Inventory: Beans (3), Duct Tape (1), Despair (∞)"
+      ],
+      tip: [
+        "SURVIVAL TIP: If it’s glowing, don’t touch it.",
+        "SURVIVAL TIP: Always check for traps... then check again.",
+        "SURVIVAL TIP: Breathe through cloth if the air smells like pennies.",
+        "SURVIVAL TIP: If you hear a Geiger counter click... run."
+      ],
+      clear: []
+    };
 
-    function typeLine() {
-      if (index < lines.length) {
-        terminal.innerHTML += "\n" + lines[index];
-        index++;
-        setTimeout(typeLine, 1000);
-      }
+    function writeLine(text = "") {
+      terminal.innerHTML += text + "\n";
+      terminal.scrollTop = terminal.scrollHeight;
     }
 
-    setTimeout(() => {
-      terminal.innerHTML = lines[0];
-      typeLine();
-    }, 1000);
+    function newPrompt() {
+      const prompt = document.createElement("span");
+      prompt.textContent = promptSymbol;
+
+      const input = document.createElement("input");
+      input.classList.add("input-line");
+      input.style.background = "black";
+      input.style.color = "#33ff33";
+      input.style.border = "none";
+      input.style.outline = "none";
+      input.style.font = "inherit";
+      input.autofocus = true;
+
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          const value = input.value.trim().toLowerCase();
+          terminal.removeChild(input);
+          prompt.textContent += value;
+          writeLine("");
+          runCommand(value);
+        }
+      });
+
+      terminal.appendChild(prompt);
+      terminal.appendChild(input);
+      input.focus();
+    }
+
+    function runCommand(cmd) {
+      if (commands[cmd]) {
+        if (cmd === "tip") {
+          const tips = commands.tip;
+          const tip = tips[Math.floor(Math.random() * tips.length)];
+          writeLine(tip);
+        } else if (cmd === "clear") {
+          terminal.innerHTML = "";
+        } else {
+          commands[cmd].forEach(writeLine);
+        }
+      } else {
+        writeLine("Unknown command. Type 'help'.");
+      }
+      newPrompt();
+    }
+
+    function boot() {
+      banner.forEach(writeLine);
+      newPrompt();
+    }
+
+    window.onload = boot;
   </script>
 </body>
 </html>
+
