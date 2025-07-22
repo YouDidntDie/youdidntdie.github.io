@@ -13,15 +13,14 @@
       font-family: monospace;
       font-size: 1rem;
       line-height: 1.4;
-      overflow: hidden;
+      overflow-y: auto;
     }
 
     #terminal {
       padding: 20px;
-      height: 100vh;
+      min-height: 100vh;
       box-sizing: border-box;
       white-space: pre-wrap;
-      overflow-y: auto;
     }
 
     .cursor {
@@ -36,8 +35,18 @@
       50% { opacity: 1; }
     }
 
+    .input-wrapper {
+      display: flex;
+      align-items: center;
+    }
+
     .input-line {
-      display: inline;
+      background: black;
+      color: #33ff33;
+      border: none;
+      outline: none;
+      font: inherit;
+      flex: 1;
     }
   </style>
 </head>
@@ -77,36 +86,37 @@
     };
 
     function writeLine(text = "") {
-      terminal.innerHTML += text + "\n";
+      const line = document.createElement("div");
+      line.textContent = text;
+      terminal.appendChild(line);
       terminal.scrollTop = terminal.scrollHeight;
     }
 
     function newPrompt() {
+      const wrapper = document.createElement("div");
+      wrapper.className = "input-wrapper";
+
       const prompt = document.createElement("span");
       prompt.textContent = promptSymbol;
 
       const input = document.createElement("input");
       input.classList.add("input-line");
-      input.style.background = "black";
-      input.style.color = "#33ff33";
-      input.style.border = "none";
-      input.style.outline = "none";
-      input.style.font = "inherit";
       input.autofocus = true;
 
       input.addEventListener("keydown", function (e) {
         if (e.key === "Enter") {
           const value = input.value.trim().toLowerCase();
-          terminal.removeChild(input);
-          prompt.textContent += value;
-          writeLine("");
+          wrapper.remove();
+          writeLine(promptSymbol + value);
           runCommand(value);
         }
       });
 
-      terminal.appendChild(prompt);
-      terminal.appendChild(input);
+      wrapper.appendChild(prompt);
+      wrapper.appendChild(input);
+      terminal.appendChild(wrapper);
       input.focus();
+      terminal.scrollTop = terminal.scrollHeight;
     }
 
     function runCommand(cmd) {
