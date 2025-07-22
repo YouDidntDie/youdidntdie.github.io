@@ -67,6 +67,47 @@
       white-space: pre;
       margin-top: 1em;
     }
+
+    .button-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 1em;
+    }
+
+    .option-btn {
+      background-color: transparent;
+      color: #33ff33;
+      border: 1px solid #33ff33;
+      padding: 0.5em 1em;
+      cursor: pointer;
+      font-family: monospace;
+      transition: background-color 0.2s;
+    }
+
+    .option-btn:hover {
+      background-color: #0f0f0f;
+    }
+
+    .interaction {
+      border: 1px solid #33ff33;
+      padding: 1em;
+      margin: 1em 0;
+    }
+
+    .choice-btn {
+      margin: 0.3em;
+      padding: 0.3em 0.6em;
+      font-family: monospace;
+      background-color: transparent;
+      border: 1px dashed #33ff33;
+      color: #33ff33;
+      cursor: pointer;
+    }
+
+    .choice-btn:hover {
+      background-color: #0f0f0f;
+    }
   </style>
 </head>
 <body>
@@ -79,7 +120,7 @@
     const banner = [
       "Welcome to the Survival Interface.",
       "You didn't die. Now what?",
-      "Type 'help' for available commands."
+      "Type 'help' or use options below."
     ];
 
     const commands = {
@@ -89,7 +130,8 @@
         " - status: Check your survival status",
         " - tip: Get a random survival tip",
         " - clear: Clear the terminal",
-        " - menu: Access interactive survival panel"
+        " - menu: Access interactive survival panel",
+        " - choices: Get situational choices"
       ],
       status: [
         "Vitals: Stable",
@@ -102,7 +144,8 @@
         "SURVIVAL TIP: Breathe through cloth if the air smells like pennies.",
         "SURVIVAL TIP: If you hear a Geiger counter click... run."
       ],
-      clear: []
+      clear: [],
+      choices: []
     };
 
     function writeLine(text = "") {
@@ -156,6 +199,8 @@
           terminal.innerHTML = "";
         } else if (cmd === "menu") {
           renderMenu();
+        } else if (cmd === "choices") {
+          renderChoices();
         } else {
           commands[cmd].forEach(writeLine);
         }
@@ -176,19 +221,49 @@
             <li>Mental Stability: ✖ Unknown</li>
           </ul>
           <div class="ascii">
-            .--.      .--.
-           : (\ ". _.' /) :
-            '.    Y    .'
-              '--( )--'
-                 / \
-                _\_/_
+            .--.      .--.<br>
+           : (\" . _.' /) :<br>
+            '.    Y    .'<br>
+              '--( )--'<br>
+                 / \<br>
+                _\_/_<br>
           </div>
         </div>
       `);
     }
 
+    function renderOptions() {
+      const options = ["help", "status", "tip", "menu", "choices", "clear"];
+      const container = document.createElement("div");
+      container.className = "button-options";
+      options.forEach(cmd => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.textContent = cmd;
+        btn.onclick = () => {
+          writeLine(promptSymbol + cmd);
+          runCommand(cmd);
+        };
+        container.appendChild(btn);
+      });
+      terminal.appendChild(container);
+    }
+
+    function renderChoices() {
+      const html = `
+        <div class="interaction">
+          <strong>You're at a crossroads:</strong><br>
+          <button class="choice-btn" onclick="alert('You scouted ahead. It was a trap.')">Scout ahead</button>
+          <button class="choice-btn" onclick="alert('You waited. Something worse found you.')">Wait it out</button>
+          <button class="choice-btn" onclick="alert('You went underground. You hear scratching...')">Go underground</button>
+        </div>
+      `;
+      writeHTML(html);
+    }
+
     function boot() {
       banner.forEach(writeLine);
+      renderOptions();
       newPrompt();
     }
 
