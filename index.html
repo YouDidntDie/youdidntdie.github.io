@@ -48,6 +48,25 @@
       font: inherit;
       flex: 1;
     }
+
+    .menu {
+      border: 1px solid #33ff33;
+      padding: 1em;
+      margin: 1em 0;
+      animation: flicker 0.5s steps(2, start) infinite alternate;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0.8; }
+      100% { opacity: 1; }
+    }
+
+    .ascii {
+      color: #22dd22;
+      font-family: monospace;
+      white-space: pre;
+      margin-top: 1em;
+    }
   </style>
 </head>
 <body>
@@ -69,7 +88,8 @@
         " - help: Show this help message",
         " - status: Check your survival status",
         " - tip: Get a random survival tip",
-        " - clear: Clear the terminal"
+        " - clear: Clear the terminal",
+        " - menu: Access interactive survival panel"
       ],
       status: [
         "Vitals: Stable",
@@ -89,6 +109,13 @@
       const line = document.createElement("div");
       line.textContent = text;
       terminal.appendChild(line);
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    function writeHTML(html) {
+      const div = document.createElement("div");
+      div.innerHTML = html;
+      terminal.appendChild(div);
       terminal.scrollTop = terminal.scrollHeight;
     }
 
@@ -127,6 +154,8 @@
           writeLine(tip);
         } else if (cmd === "clear") {
           terminal.innerHTML = "";
+        } else if (cmd === "menu") {
+          renderMenu();
         } else {
           commands[cmd].forEach(writeLine);
         }
@@ -134,6 +163,28 @@
         writeLine("Unknown command. Type 'help'.");
       }
       newPrompt();
+    }
+
+    function renderMenu() {
+      writeHTML(`
+        <div class="menu">
+          <strong>[SURVIVAL PANEL]</strong><br>
+          <ul>
+            <li>Vitals: 87%</li>
+            <li>Stamina: 42%</li>
+            <li>Radiation: LOW</li>
+            <li>Mental Stability: ✖ Unknown</li>
+          </ul>
+          <div class="ascii">
+            .--.      .--.
+           : (\ ". _.' /) :
+            '.    Y    .'
+              '--( )--'
+                 / \
+                _\_/_
+          </div>
+        </div>
+      `);
     }
 
     function boot() {
