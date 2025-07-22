@@ -13,7 +13,7 @@
       font-family: monospace;
       font-size: 1rem;
       line-height: 1.4;
-      overflow-y: auto;
+      overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -35,6 +35,8 @@
 
     #terminal {
       white-space: pre-wrap;
+      height: 100%;
+      overflow-y: auto;
     }
 
     .cursor {
@@ -69,6 +71,26 @@
     .option-btn:hover {
       background-color: #004400;
     }
+
+    .hidden {
+      display: none;
+    }
+
+    #loading-bar {
+      width: 100%;
+      background-color: #004400;
+      border: 1px solid #33ff33;
+      height: 20px;
+      margin-top: 1em;
+      position: relative;
+    }
+
+    #loading-progress {
+      height: 100%;
+      background-color: #33ff33;
+      width: 0%;
+      transition: width 0.3s;
+    }
   </style>
 </head>
 <body>
@@ -91,6 +113,33 @@
       });
     }
 
+    async function animatedTitle() {
+      await writeLine("You didn't die", 1200);
+      await writeLine(", now what?", 1200);
+    }
+
+    async function loadingSequence() {
+      const bar = document.createElement("div");
+      bar.id = "loading-bar";
+      const progress = document.createElement("div");
+      progress.id = "loading-progress";
+      bar.appendChild(progress);
+      terminal.appendChild(bar);
+
+      for (let i = 1; i <= 100; i += Math.floor(Math.random() * 15)) {
+        await new Promise(res => setTimeout(res, 100 + Math.random() * 200));
+        progress.style.width = i + "%";
+        if (Math.random() < 0.15) {
+          const glitch = document.createElement("div");
+          glitch.textContent = glitchLine();
+          terminal.appendChild(glitch);
+        }
+      }
+
+      progress.style.width = "100%";
+      await writeLine("[RECOVERY] Survival OS Loaded.", 1000);
+    }
+
     function glitchLine(length = 30) {
       const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{};':,.<>/?";
       let line = "";
@@ -100,64 +149,51 @@
       return line;
     }
 
-    async function fakeCorruptedBootloader() {
-      await writeLine("Bootloader sequence initiated...", 700);
-      await writeLine(glitchLine(), 300);
-      await writeLine("...ERROR: Boot sequence failed", 500);
-      await writeLine(glitchLine(), 200);
-      await writeLine("Attempting recovery...", 700);
-      await writeLine("[RECOVERY] Survival OS Loaded.", 1000);
-    }
-
     function renderOptions() {
-      const options = ["help", "status", "tip", "menu", "choices", "clear"];
       const container = document.createElement("div");
       container.className = "button-options";
+      const options = ["help", "status", "tip", "menu", "choices", "clear"];
       options.forEach(cmd => {
         const btn = document.createElement("button");
         btn.className = "option-btn";
         btn.textContent = cmd;
-        btn.onclick = () => handleCommand(cmd);
+        btn.onclick = () => loadScreen(cmd);
         container.appendChild(btn);
       });
       terminal.appendChild(container);
       terminal.scrollTop = terminal.scrollHeight;
     }
 
-    function handleCommand(cmd) {
-      const output = document.createElement("div");
-      switch (cmd) {
-        case "help":
-          output.textContent = "Available commands: help, status, tip, menu, choices, clear.";
-          break;
-        case "status":
-          output.textContent = "Status: You’re alive. Which is suspicious.";
-          break;
-        case "tip":
-          output.textContent = "Survival Tip: Don’t drink glowing water unless you like glowing kidneys.";
-          break;
-        case "menu":
-          output.textContent = "Main Menu: [1] Inventory [2] Map [3] Exit";
-          break;
-        case "choices":
-          output.textContent = "Choices: Run / Hide / Scavenge / Accept Death";
-          break;
-        case "clear":
+    function loadScreen(cmd) {
+      terminal.innerHTML = "";
+      writeLine(`>>> ${cmd.toUpperCase()} SCREEN <<<`, 500).then(() => {
+        const backBtn = document.createElement("button");
+        backBtn.textContent = "< Back";
+        backBtn.className = "option-btn";
+        backBtn.onclick = () => {
           terminal.innerHTML = "";
-          return;
-        default:
-          output.textContent = `Unknown command: ${cmd}`;
-      }
-      terminal.appendChild(output);
-      terminal.scrollTop = terminal.scrollHeight;
+          bootMainUI();
+        };
+        terminal.appendChild(backBtn);
+
+        const content = document.createElement("div");
+        content.textContent = `This is the ${cmd} screen. More to come...`;
+        terminal.appendChild(content);
+        terminal.scrollTop = terminal.scrollHeight;
+      });
+    }
+
+    async function bootMainUI() {
+      await writeLine("Welcome to the Survival Interface.", 800);
+      await writeLine("You didn't die. Now what?", 1000);
+      await writeLine("\nAvailable Commands:", 800);
+      renderOptions();
     }
 
     async function bootSequence() {
-      await fakeCorruptedBootloader();
-      await writeLine("Welcome to the Survival Interface.", 1200);
-      await writeLine("You didn't die. Now what?", 1500);
-      await writeLine("\nAvailable Commands:", 800);
-      renderOptions();
+      await animatedTitle();
+      await loadingSequence();
+      await bootMainUI();
     }
 
     window.onload = bootSequence;
