@@ -91,31 +91,66 @@
       width: 0%;
       transition: width 0.3s;
     }
+
+    .avatar {
+      font-weight: bold;
+      color: #00ffaa;
+      margin-top: 1em;
+    }
   </style>
 </head>
 <body>
   <div id="interface">
     <div id="terminal"></div>
   </div>
-
+  <audio id="static-sound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
   <script>
     const terminal = document.getElementById("terminal");
+    const staticSound = document.getElementById("static-sound");
 
-    function writeLine(text = "", delay = 500) {
+    function glitchLine(length = 30) {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{};':,.<>/?";
+      let line = "";
+      for (let i = 0; i < length; i++) {
+        line += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return line;
+    }
+
+    function playStatic() {
+      staticSound.currentTime = 0;
+      staticSound.play();
+    }
+
+    function typeWriterEffect(text, speed = 30) {
       return new Promise(resolve => {
-        setTimeout(() => {
-          const line = document.createElement("div");
-          line.textContent = text;
-          terminal.appendChild(line);
-          terminal.scrollTop = terminal.scrollHeight;
-          resolve();
-        }, delay);
+        let i = 0;
+        const line = document.createElement("div");
+        terminal.appendChild(line);
+
+        function type() {
+          if (i < text.length) {
+            line.textContent += text.charAt(i);
+            i++;
+            setTimeout(type, speed);
+          } else {
+            resolve();
+          }
+        }
+        type();
       });
     }
 
-    async function animatedTitle() {
-      await writeLine("You didn't die", 1200);
-      await writeLine(", now what?", 1200);
+    async function writeLine(text = "", delay = 500) {
+      await new Promise(res => setTimeout(res, delay));
+      await typeWriterEffect(text);
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    async function animatedIntro() {
+      await writeLine("You didn't die.", 1000);
+      await writeLine("", 1000); // Pause
+      await writeLine("Now what?", 1000);
     }
 
     async function loadingSequence() {
@@ -133,20 +168,12 @@
           const glitch = document.createElement("div");
           glitch.textContent = glitchLine();
           terminal.appendChild(glitch);
+          playStatic();
         }
       }
 
       progress.style.width = "100%";
       await writeLine("[RECOVERY] Survival OS Loaded.", 1000);
-    }
-
-    function glitchLine(length = 30) {
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{};':,.<>/?";
-      let line = "";
-      for (let i = 0; i < length; i++) {
-        line += chars[Math.floor(Math.random() * chars.length)];
-      }
-      return line;
     }
 
     function renderOptions() {
@@ -166,7 +193,12 @@
 
     function loadScreen(cmd) {
       terminal.innerHTML = "";
-      writeLine(`>>> ${cmd.toUpperCase()} SCREEN <<<`, 500).then(() => {
+      writeLine(`>>> ${cmd.toUpperCase()} SCREEN <<<`, 300).then(() => {
+        const avatar = document.createElement("div");
+        avatar.className = "avatar";
+        avatar.textContent = `💀 AI-SURVIVOR: Here's what you need for '${cmd}'...`;
+        terminal.appendChild(avatar);
+
         const backBtn = document.createElement("button");
         backBtn.textContent = "< Back";
         backBtn.className = "option-btn";
@@ -177,7 +209,7 @@
         terminal.appendChild(backBtn);
 
         const content = document.createElement("div");
-        content.textContent = `This is the ${cmd} screen. More to come...`;
+        content.textContent = `Placeholder for ${cmd} content. Actual survival wisdom coming soon.`;
         terminal.appendChild(content);
         terminal.scrollTop = terminal.scrollHeight;
       });
@@ -191,7 +223,7 @@
     }
 
     async function bootSequence() {
-      await animatedTitle();
+      await animatedIntro();
       await loadingSequence();
       await bootMainUI();
     }
