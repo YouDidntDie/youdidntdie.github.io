@@ -35,39 +35,6 @@
       50% { opacity: 1; }
     }
 
-    .input-wrapper {
-      display: flex;
-      align-items: center;
-    }
-
-    .input-line {
-      background: black;
-      color: #33ff33;
-      border: none;
-      outline: none;
-      font: inherit;
-      flex: 1;
-    }
-
-    .menu {
-      border: 1px solid #33ff33;
-      padding: 1em;
-      margin: 1em 0;
-      animation: flicker 0.5s steps(2, start) infinite alternate;
-    }
-
-    @keyframes flicker {
-      0% { opacity: 0.8; }
-      100% { opacity: 1; }
-    }
-
-    .ascii {
-      color: #22dd22;
-      font-family: monospace;
-      white-space: pre;
-      margin-top: 1em;
-    }
-
     .button-options {
       display: flex;
       flex-wrap: wrap;
@@ -88,26 +55,6 @@
     .option-btn:hover {
       background-color: #0f0f0f;
     }
-
-    .interaction {
-      border: 1px solid #33ff33;
-      padding: 1em;
-      margin: 1em 0;
-    }
-
-    .choice-btn {
-      margin: 0.3em;
-      padding: 0.3em 0.6em;
-      font-family: monospace;
-      background-color: transparent;
-      border: 1px dashed #33ff33;
-      color: #33ff33;
-      cursor: pointer;
-    }
-
-    .choice-btn:hover {
-      background-color: #0f0f0f;
-    }
   </style>
 </head>
 <body>
@@ -115,121 +62,17 @@
 
   <script>
     const terminal = document.getElementById("terminal");
-    const promptSymbol = "> ";
 
-    const banner = [
-      "Welcome to the Survival Interface.",
-      "You didn't die. Now what?",
-      "Type 'help' or use options below if you forgot how to write."
-    ];
-
-    const commands = {
-      help: [
-        "Available commands:",
-        " - help: Show this help message",
-        " - status: Check your survival status",
-        " - tip: Get a random survival tip",
-        " - clear: Clear the terminal",
-        " - menu: Access interactive survival panel",
-        " - choices: Get situational choices"
-      ],
-      status: [
-        "Vitals: Stable",
-        "Radiation: Low",
-        "Inventory: Beans (3), Duct Tape (1), Despair (∞)"
-      ],
-      tip: [
-        "SURVIVAL TIP: If it’s glowing, don’t touch it.",
-        "SURVIVAL TIP: Always check for traps... then check again.",
-        "SURVIVAL TIP: Breathe through cloth if the air smells like pennies.",
-        "SURVIVAL TIP: If you hear a Geiger counter click... run."
-      ],
-      clear: [],
-      choices: []
-    };
-
-    function writeLine(text = "") {
-      const line = document.createElement("div");
-      line.textContent = text;
-      terminal.appendChild(line);
-      terminal.scrollTop = terminal.scrollHeight;
-    }
-
-    function writeHTML(html) {
-      const div = document.createElement("div");
-      div.innerHTML = html;
-      terminal.appendChild(div);
-      terminal.scrollTop = terminal.scrollHeight;
-    }
-
-    function newPrompt() {
-      const wrapper = document.createElement("div");
-      wrapper.className = "input-wrapper";
-
-      const prompt = document.createElement("span");
-      prompt.textContent = promptSymbol;
-
-      const input = document.createElement("input");
-      input.classList.add("input-line");
-      input.autofocus = true;
-
-      input.addEventListener("keydown", function (e) {
-        if (e.key === "Enter") {
-          const value = input.value.trim().toLowerCase();
-          wrapper.remove();
-          writeLine(promptSymbol + value);
-          runCommand(value);
-        }
+    function writeLine(text = "", delay = 500) {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          const line = document.createElement("div");
+          line.textContent = text;
+          terminal.appendChild(line);
+          terminal.scrollTop = terminal.scrollHeight;
+          resolve();
+        }, delay);
       });
-
-      wrapper.appendChild(prompt);
-      wrapper.appendChild(input);
-      terminal.appendChild(wrapper);
-      input.focus();
-      terminal.scrollTop = terminal.scrollHeight;
-    }
-
-    function runCommand(cmd) {
-      if (commands[cmd]) {
-        if (cmd === "tip") {
-          const tips = commands.tip;
-          const tip = tips[Math.floor(Math.random() * tips.length)];
-          writeLine(tip);
-        } else if (cmd === "clear") {
-          terminal.innerHTML = "";
-        } else if (cmd === "menu") {
-          renderMenu();
-        } else if (cmd === "choices") {
-          renderChoices();
-        } else {
-          commands[cmd].forEach(writeLine);
-        }
-      } else {
-        writeLine("Unknown command. Type 'help'.");
-      }
-      newPrompt();
-    }
-
-    function renderMenu() {
-      writeHTML(`
-        <div class="menu">
-          <strong>[SURVIVAL PANEL]</strong><br>
-          <ul>
-            <li>Vitals: 87%</li>
-            <li>Stamina: 42%</li>
-            <li>Radiation: LOW</li>
-            <li>Mental Stability: ✖ Unknown</li>
-          </ul>
-          <div class="ascii">
-            .--.      .--.<br>
-           : (\" . _.' /) :<br>
-            '.    Y    .'<br>
-              '--( )--'<br>
-                 / \<br>
-                _\_/_<br>
-          </div>
-        </div>
-      `);
     }
 
     function renderOptions() {
@@ -240,34 +83,23 @@
         const btn = document.createElement("button");
         btn.className = "option-btn";
         btn.textContent = cmd;
-        btn.onclick = () => {
-          writeLine(promptSymbol + cmd);
-          runCommand(cmd);
-        };
+        btn.onclick = () => alert(`You chose: ${cmd}`);
         container.appendChild(btn);
       });
       terminal.appendChild(container);
+      terminal.scrollTop = terminal.scrollHeight;
     }
 
-    function renderChoices() {
-      const html = `
-        <div class="interaction">
-          <strong>You're at a crossroads:</strong><br>
-          <button class="choice-btn" onclick="alert('You scouted ahead. It was a trap.')">Scout ahead</button>
-          <button class="choice-btn" onclick="alert('You waited. Something worse found you.')">Wait it out</button>
-          <button class="choice-btn" onclick="alert('You went underground. You hear scratching...')">Go underground</button>
-        </div>
-      `;
-      writeHTML(html);
-    }
-
-    function boot() {
-      banner.forEach(writeLine);
+    async function bootSequence() {
+      await writeLine("Initializing Survival Interface...", 1000);
+      await writeLine("[OK] SYSTEM ONLINE", 600);
+      await writeLine("Welcome to the Survival Interface.", 1200);
+      await writeLine("You didn't die. Now what?", 1500);
+      await writeLine("\nAvailable Commands:", 800);
       renderOptions();
-      newPrompt();
     }
 
-    window.onload = boot;
+    window.onload = bootSequence;
   </script>
 </body>
 </html>
