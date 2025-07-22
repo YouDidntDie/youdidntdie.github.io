@@ -8,224 +8,193 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: #000;
+      background-color: black;
       color: #33ff33;
-      font-family: monospace;
+      font-family: 'Courier New', monospace;
       font-size: 1rem;
-      line-height: 1.4;
       overflow: hidden;
+    }
+
+    #screen {
+      width: 100vw;
+      height: 100vh;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      background: radial-gradient(ellipse at center, #000 0%, #0a0a0a 100%);
     }
 
-    #interface {
-      background-color: #001a00;
-      border: 3px solid #33ff33;
-      width: 90vw;
-      max-width: 800px;
-      height: 90vh;
-      padding: 20px;
-      box-sizing: border-box;
-      overflow-y: auto;
-      position: relative;
-      box-shadow: 0 0 20px #33ff33;
+    .glitch {
+      animation: glitch 0.5s linear infinite;
     }
 
-    #terminal {
-      white-space: pre-wrap;
+    @keyframes glitch {
+      0% { text-shadow: 2px 0 red, -2px 0 blue; }
+      20% { text-shadow: -2px 0 red, 2px 0 blue; }
+      40% { text-shadow: 2px 0 red, -2px 0 blue; }
+      60% { text-shadow: -2px 0 red, 2px 0 blue; }
+      80% { text-shadow: 2px 0 red, -2px 0 blue; }
+      100% { text-shadow: -2px 0 red, 2px 0 blue; }
+    }
+
+    #bootText, #loadingBar, #mainUI {
+      display: none;
+      text-align: center;
+    }
+
+    #loadingBarContainer {
+      width: 80%;
+      height: 20px;
+      background-color: #222;
+      border: 1px solid #33ff33;
+      margin-top: 20px;
+    }
+
+    #loadingBar {
       height: 100%;
-      overflow-y: auto;
-    }
-
-    .cursor {
-      display: inline-block;
-      width: 10px;
+      width: 0%;
       background-color: #33ff33;
-      animation: blink 1s steps(2, start) infinite;
+      transition: width 0.2s linear;
     }
 
-    @keyframes blink {
-      0%, 100% { opacity: 0; }
-      50% { opacity: 1; }
-    }
-
-    .button-options {
+    .btn-grid {
       display: flex;
       flex-wrap: wrap;
+      justify-content: center;
       gap: 10px;
-      margin-top: 1em;
+      margin-top: 30px;
     }
 
     .option-btn {
-      background-color: transparent;
-      color: #33ff33;
+      background-color: #111;
       border: 1px solid #33ff33;
-      padding: 0.5em 1em;
+      color: #33ff33;
+      padding: 10px 20px;
       cursor: pointer;
       font-family: monospace;
-      transition: background-color 0.2s;
     }
 
     .option-btn:hover {
-      background-color: #004400;
+      background-color: #0f0f0f;
     }
 
-    .hidden {
+    .screen {
       display: none;
+      text-align: left;
+      padding: 20px;
+      width: 80%;
     }
 
-    #loading-bar {
-      width: 100%;
-      background-color: #004400;
-      border: 1px solid #33ff33;
-      height: 20px;
-      margin-top: 1em;
-      position: relative;
-    }
-
-    #loading-progress {
-      height: 100%;
-      background-color: #33ff33;
-      width: 0%;
-      transition: width 0.3s;
-    }
-
-    .avatar {
-      font-weight: bold;
-      color: #00ffaa;
-      margin-top: 1em;
+    .back-btn {
+      margin-top: 20px;
+      color: #33ff33;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 1rem;
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <div id="interface">
-    <div id="terminal"></div>
+  <div id="screen">
+    <div id="intro" class="glitch">You didn't die.</div>
+    <div id="followup"></div>
+    <div id="bootText">Initializing survival interface...</div>
+    <div id="loadingBarContainer">
+      <div id="loadingBar"></div>
+    </div>
+    <div id="mainUI">
+      <h2>Main Menu</h2>
+      <div class="btn-grid">
+        <button class="option-btn" onclick="showScreen('help')">Help</button>
+        <button class="option-btn" onclick="showScreen('status')">Status</button>
+        <button class="option-btn" onclick="showScreen('tips')">Tips</button>
+        <button class="option-btn" onclick="showScreen('encyclopedia')">Encyclopedia</button>
+        <button class="option-btn" onclick="showScreen('missions')">Missions</button>
+        <button class="option-btn" onclick="showScreen('settings')">Settings</button>
+      </div>
+    </div>
+
+    <div id="help" class="screen">
+      <h3>HELP</h3>
+      <p>You're alive. That's unfortunate. Here's what you need to know to keep it that way.</p>
+      <button class="back-btn" onclick="goHome()">← Back</button>
+    </div>
+    <div id="status" class="screen">
+      <h3>STATUS</h3>
+      <p>Vitals: Functioning. Morale: Questionable. Inventory: Not great.</p>
+      <button class="back-btn" onclick="goHome()">← Back</button>
+    </div>
+    <div id="tips" class="screen">
+      <h3>TIPS</h3>
+      <p>Tip #1: Don't die again. You won't like what comes next.</p>
+      <button class="back-btn" onclick="goHome()">← Back</button>
+    </div>
+    <div id="encyclopedia" class="screen">
+      <h3>ENCYCLOPEDIA</h3>
+      <p>Coming soon: A full survivalist’s database on every godforsaken scenario imaginable.</p>
+      <button class="back-btn" onclick="goHome()">← Back</button>
+    </div>
+    <div id="missions" class="screen">
+      <h3>MISSIONS</h3>
+      <p>Nothing yet. Which is lucky. Or ominous. Or both.</p>
+      <button class="back-btn" onclick="goHome()">← Back</button>
+    </div>
+    <div id="settings" class="screen">
+      <h3>SETTINGS</h3>
+      <p>Adjust the glow, the doom level, or reset your fate.</p>
+      <button class="back-btn" onclick="goHome()">← Back</button>
+    </div>
   </div>
-  <audio id="static-sound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+
   <script>
-    const terminal = document.getElementById("terminal");
-    const staticSound = document.getElementById("static-sound");
+    const intro = document.getElementById("intro");
+    const followup = document.getElementById("followup");
+    const bootText = document.getElementById("bootText");
+    const loadingBar = document.getElementById("loadingBar");
+    const loadingBarContainer = document.getElementById("loadingBarContainer");
+    const mainUI = document.getElementById("mainUI");
+    const screens = document.querySelectorAll(".screen");
 
-    function glitchLine(length = 30) {
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{};':,.<>/?";
-      let line = "";
-      for (let i = 0; i < length; i++) {
-        line += chars[Math.floor(Math.random() * chars.length)];
-      }
-      return line;
-    }
-
-    function playStatic() {
-      staticSound.currentTime = 0;
-      staticSound.play();
-    }
-
-    function typeWriterEffect(text, speed = 30) {
-      return new Promise(resolve => {
-        let i = 0;
-        const line = document.createElement("div");
-        terminal.appendChild(line);
-
-        function type() {
-          if (i < text.length) {
-            line.textContent += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
-          } else {
-            resolve();
-          }
-        }
-        type();
-      });
-    }
-
-    async function writeLine(text = "", delay = 500) {
-      await new Promise(res => setTimeout(res, delay));
-      await typeWriterEffect(text);
-      terminal.scrollTop = terminal.scrollHeight;
-    }
-
-    async function animatedIntro() {
-      await writeLine("You didn't die.", 1000);
-      await writeLine("", 1000); // Pause
-      await writeLine("Now what?", 1000);
-    }
-
-    async function loadingSequence() {
-      const bar = document.createElement("div");
-      bar.id = "loading-bar";
-      const progress = document.createElement("div");
-      progress.id = "loading-progress";
-      bar.appendChild(progress);
-      terminal.appendChild(bar);
-
-      for (let i = 1; i <= 100; i += Math.floor(Math.random() * 15)) {
-        await new Promise(res => setTimeout(res, 100 + Math.random() * 200));
-        progress.style.width = i + "%";
-        if (Math.random() < 0.15) {
-          const glitch = document.createElement("div");
-          glitch.textContent = glitchLine();
-          terminal.appendChild(glitch);
-          playStatic();
-        }
-      }
-
-      progress.style.width = "100%";
-      await writeLine("[RECOVERY] Survival OS Loaded.", 1000);
-    }
-
-    function renderOptions() {
-      const container = document.createElement("div");
-      container.className = "button-options";
-      const options = ["help", "status", "tip", "menu", "choices", "clear"];
-      options.forEach(cmd => {
-        const btn = document.createElement("button");
-        btn.className = "option-btn";
-        btn.textContent = cmd;
-        btn.onclick = () => loadScreen(cmd);
-        container.appendChild(btn);
-      });
-      terminal.appendChild(container);
-      terminal.scrollTop = terminal.scrollHeight;
-    }
-
-    function loadScreen(cmd) {
-      terminal.innerHTML = "";
-      writeLine(`>>> ${cmd.toUpperCase()} SCREEN <<<`, 300).then(() => {
-        const avatar = document.createElement("div");
-        avatar.className = "avatar";
-        avatar.textContent = `💀 AI-SURVIVOR: Here's what you need for '${cmd}'...`;
-        terminal.appendChild(avatar);
-
-        const backBtn = document.createElement("button");
-        backBtn.textContent = "< Back";
-        backBtn.className = "option-btn";
-        backBtn.onclick = () => {
-          terminal.innerHTML = "";
-          bootMainUI();
-        };
-        terminal.appendChild(backBtn);
-
-        const content = document.createElement("div");
-        content.textContent = `Placeholder for ${cmd} content. Actual survival wisdom coming soon.`;
-        terminal.appendChild(content);
-        terminal.scrollTop = terminal.scrollHeight;
-      });
-    }
-
-    async function bootMainUI() {
-      await writeLine("Welcome to the Survival Interface.", 800);
-      await writeLine("You didn't die. Now what?", 1000);
-      await writeLine("\nAvailable Commands:", 800);
-      renderOptions();
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     async function bootSequence() {
-      await animatedIntro();
-      await loadingSequence();
-      await bootMainUI();
+      await delay(1000);
+      intro.classList.remove("glitch");
+      await delay(1000);
+      followup.textContent = ", now what?";
+      await delay(1500);
+      intro.style.display = "none";
+      followup.style.display = "none";
+      bootText.style.display = "block";
+      loadingBarContainer.style.display = "block";
+
+      for (let i = 0; i <= 100; i++) {
+        loadingBar.style.width = i + "%";
+        await delay(20 + Math.random() * 50);
+        if (Math.random() < 0.1) loadingBar.classList.add("glitch");
+        else loadingBar.classList.remove("glitch");
+      }
+
+      await delay(800);
+      bootText.style.display = "none";
+      loadingBarContainer.style.display = "none";
+      mainUI.style.display = "block";
+    }
+
+    function showScreen(id) {
+      mainUI.style.display = "none";
+      screens.forEach(screen => screen.style.display = "none");
+      document.getElementById(id).style.display = "block";
+    }
+
+    function goHome() {
+      screens.forEach(screen => screen.style.display = "none");
+      mainUI.style.display = "block";
     }
 
     window.onload = bootSequence;
