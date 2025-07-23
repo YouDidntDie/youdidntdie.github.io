@@ -10,191 +10,137 @@
       padding: 0;
       background-color: black;
       color: #33ff33;
-      font-family: 'Courier New', monospace;
+      font-family: monospace;
       font-size: 1rem;
+      line-height: 1.4;
       overflow: hidden;
     }
 
-    #screen {
-      width: 100vw;
+    #terminal {
+      padding: 20px;
       height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background: radial-gradient(ellipse at center, #000 0%, #0a0a0a 100%);
+      box-sizing: border-box;
+      white-space: pre-wrap;
+      position: relative;
     }
 
     .glitch {
-      animation: glitch 0.5s linear infinite;
-    }
-
-    @keyframes glitch {
-      0% { text-shadow: 2px 0 red, -2px 0 blue; }
-      20% { text-shadow: -2px 0 red, 2px 0 blue; }
-      40% { text-shadow: 2px 0 red, -2px 0 blue; }
-      60% { text-shadow: -2px 0 red, 2px 0 blue; }
-      80% { text-shadow: 2px 0 red, -2px 0 blue; }
-      100% { text-shadow: -2px 0 red, 2px 0 blue; }
-    }
-
-    #bootText, #loadingBar, #mainUI {
-      display: none;
-      text-align: center;
-    }
-
-    #loadingBarContainer {
-      width: 80%;
-      height: 20px;
-      background-color: #222;
-      border: 1px solid #33ff33;
-      margin-top: 20px;
-    }
-
-    #loadingBar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
       height: 100%;
-      width: 0%;
-      background-color: #33ff33;
-      transition: width 0.2s linear;
+      background: black;
+      mix-blend-mode: difference;
+      animation: glitchAnim 0.5s steps(2, end);
+      z-index: 99;
     }
 
-    .btn-grid {
+    @keyframes glitchAnim {
+      0% { transform: scale(1.02, 0.98) translate(2px, -2px); opacity: 1; }
+      20% { transform: scale(1.05, 0.95) translate(-3px, 3px); opacity: 0.8; }
+      40% { transform: scale(0.95, 1.05) translate(2px, -3px); opacity: 1; }
+      60% { transform: scale(1.03, 0.97) translate(-2px, 2px); opacity: 0.7; }
+      80% { transform: scale(0.98, 1.02) translate(3px, -1px); opacity: 0.9; }
+      100% { transform: none; opacity: 0; }
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      background-color: #33ff33;
+      animation: blink 1s steps(2, start) infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+
+    .button-options {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
       gap: 10px;
-      margin-top: 30px;
+      margin-top: 1em;
     }
 
     .option-btn {
-      background-color: #111;
-      border: 1px solid #33ff33;
+      background-color: transparent;
       color: #33ff33;
-      padding: 10px 20px;
+      border: 1px solid #33ff33;
+      padding: 0.5em 1em;
       cursor: pointer;
       font-family: monospace;
+      transition: background-color 0.2s;
     }
 
     .option-btn:hover {
       background-color: #0f0f0f;
     }
-
-    .screen {
-      display: none;
-      text-align: left;
-      padding: 20px;
-      width: 80%;
-    }
-
-    .back-btn {
-      margin-top: 20px;
-      color: #33ff33;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      font-size: 1rem;
-      text-decoration: underline;
-    }
   </style>
 </head>
 <body>
-  <div id="screen">
-    <div id="intro" class="glitch">You didn't die.</div>
-    <div id="followup"></div>
-    <div id="bootText">Initializing survival interface...</div>
-    <div id="loadingBarContainer">
-      <div id="loadingBar"></div>
-    </div>
-    <div id="mainUI">
-      <h2>Main Menu</h2>
-      <div class="btn-grid">
-        <button class="option-btn" onclick="showScreen('help')">Help</button>
-        <button class="option-btn" onclick="showScreen('status')">Status</button>
-        <button class="option-btn" onclick="showScreen('tips')">Tips</button>
-        <button class="option-btn" onclick="showScreen('encyclopedia')">Encyclopedia</button>
-        <button class="option-btn" onclick="showScreen('missions')">Missions</button>
-        <button class="option-btn" onclick="showScreen('settings')">Settings</button>
-      </div>
-    </div>
-
-    <div id="help" class="screen">
-      <h3>HELP</h3>
-      <p>You're alive. That's unfortunate. Here's what you need to know to keep it that way.</p>
-      <button class="back-btn" onclick="goHome()">← Back</button>
-    </div>
-    <div id="status" class="screen">
-      <h3>STATUS</h3>
-      <p>Vitals: Functioning. Morale: Questionable. Inventory: Not great.</p>
-      <button class="back-btn" onclick="goHome()">← Back</button>
-    </div>
-    <div id="tips" class="screen">
-      <h3>TIPS</h3>
-      <p>Tip #1: Don't die again. You won't like what comes next.</p>
-      <button class="back-btn" onclick="goHome()">← Back</button>
-    </div>
-    <div id="encyclopedia" class="screen">
-      <h3>ENCYCLOPEDIA</h3>
-      <p>Coming soon: A full survivalist’s database on every godforsaken scenario imaginable.</p>
-      <button class="back-btn" onclick="goHome()">← Back</button>
-    </div>
-    <div id="missions" class="screen">
-      <h3>MISSIONS</h3>
-      <p>Nothing yet. Which is lucky. Or ominous. Or both.</p>
-      <button class="back-btn" onclick="goHome()">← Back</button>
-    </div>
-    <div id="settings" class="screen">
-      <h3>SETTINGS</h3>
-      <p>Adjust the glow, the doom level, or reset your fate.</p>
-      <button class="back-btn" onclick="goHome()">← Back</button>
-    </div>
-  </div>
+  <div id="terminal"></div>
 
   <script>
-    const intro = document.getElementById("intro");
-    const followup = document.getElementById("followup");
-    const bootText = document.getElementById("bootText");
-    const loadingBar = document.getElementById("loadingBar");
-    const loadingBarContainer = document.getElementById("loadingBarContainer");
-    const mainUI = document.getElementById("mainUI");
-    const screens = document.querySelectorAll(".screen");
+    const terminal = document.getElementById("terminal");
 
-    function delay(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
+    function typeWriter(text, delayPerChar = 50, pauseAfter = 0) {
+      return new Promise(resolve => {
+        let i = 0;
+        const line = document.createElement("div");
+        terminal.appendChild(line);
+
+        const typeInterval = setInterval(() => {
+          if (i < text.length) {
+            line.textContent += text.charAt(i);
+            terminal.scrollTop = terminal.scrollHeight;
+            i++;
+          } else {
+            clearInterval(typeInterval);
+            setTimeout(resolve, pauseAfter);
+          }
+        }, delayPerChar);
+      });
+    }
+
+    function showGlitch(duration = 500) {
+      return new Promise(resolve => {
+        const glitchOverlay = document.createElement("div");
+        glitchOverlay.className = "glitch";
+        terminal.appendChild(glitchOverlay);
+        setTimeout(() => {
+          terminal.removeChild(glitchOverlay);
+          resolve();
+        }, duration);
+      });
+    }
+
+    function renderOptions() {
+      const options = ["help", "status", "tip", "menu", "choices", "clear"];
+      const container = document.createElement("div");
+      container.className = "button-options";
+      options.forEach(cmd => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.textContent = cmd;
+        btn.onclick = () => alert(`You chose: ${cmd}`);
+        container.appendChild(btn);
+      });
+      terminal.appendChild(container);
+      terminal.scrollTop = terminal.scrollHeight;
     }
 
     async function bootSequence() {
-      await delay(1000);
-      intro.classList.remove("glitch");
-      await delay(1000);
-      followup.textContent = ", now what?";
-      await delay(1500);
-      intro.style.display = "none";
-      followup.style.display = "none";
-      bootText.style.display = "block";
-      loadingBarContainer.style.display = "block";
-
-      for (let i = 0; i <= 100; i++) {
-        loadingBar.style.width = i + "%";
-        await delay(20 + Math.random() * 50);
-        if (Math.random() < 0.1) loadingBar.classList.add("glitch");
-        else loadingBar.classList.remove("glitch");
-      }
-
-      await delay(800);
-      bootText.style.display = "none";
-      loadingBarContainer.style.display = "none";
-      mainUI.style.display = "block";
-    }
-
-    function showScreen(id) {
-      mainUI.style.display = "none";
-      screens.forEach(screen => screen.style.display = "none");
-      document.getElementById(id).style.display = "block";
-    }
-
-    function goHome() {
-      screens.forEach(screen => screen.style.display = "none");
-      mainUI.style.display = "block";
+      await typeWriter("Initializing Survival Interface...", 50, 600);
+      await typeWriter("[OK] SYSTEM ONLINE", 50, 600);
+      await typeWriter("Welcome to the Survival Interface.", 50, 1000);
+      await typeWriter("You didn't die", 75, 1000);
+      await typeWriter(",", 75, 500);
+      await typeWriter(" now what?", 75, 1000);
+      await showGlitch(500);
+      await typeWriter("\nAvailable Commands:", 50, 800);
+      renderOptions();
     }
 
     window.onload = bootSequence;
