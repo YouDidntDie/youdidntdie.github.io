@@ -207,7 +207,15 @@
     }
 
     function renderOptions() {
-      const options = ["help", "status", "tip", "menu", "choices", "clear"];
+      const options = [
+        "Start Here",
+        "Basics",
+        "Threats",
+        "Mental Survival",
+        "Tools",
+        "Store",
+        "About"
+      ];
       const container = document.createElement("div");
       container.className = "button-options";
       options.forEach(cmd => {
