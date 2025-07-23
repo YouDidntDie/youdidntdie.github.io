@@ -5,50 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>You Didn't Die, Now What?</title>
   <style>
-    :root {
-      --green: #33ff33;
-      --dark: #0d0d0d;
-      --glow: 0 0 8px var(--green);
-    }
-
-    * {
-      box-sizing: border-box;
+    body {
       margin: 0;
       padding: 0;
-    }
-
-    html, body {
-      height: 100%;
-      background-color: var(--dark);
-      font-family: 'Courier New', Courier, monospace;
-      color: var(--green);
+      background-color: black;
+      color: #33ff33;
+      font-family: monospace;
+      font-size: 1rem;
+      line-height: 1.4;
       overflow: hidden;
     }
 
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px;
+    #terminal {
+      padding: 20px;
+      height: 100vh;
+      box-sizing: border-box;
+      white-space: pre-wrap;
+      position: relative;
     }
 
-    #terminal {
+    .glitch {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      max-width: 600px;
-      background: #000;
-      border: 4px inset var(--green);
-      padding: 1rem;
       height: 100%;
-      max-height: 95vh;
-      overflow-y: auto;
-      box-shadow: var(--glow);
-      border-radius: 8px;
+      background: black;
+      mix-blend-mode: difference;
+      animation: glitchAnim 0.5s steps(2, end);
+      z-index: 99;
+    }
+
+    @keyframes glitchAnim {
+      0% { transform: scale(1.02, 0.98) translate(2px, -2px); opacity: 1; }
+      20% { transform: scale(1.05, 0.95) translate(-3px, 3px); opacity: 0.8; }
+      40% { transform: scale(0.95, 1.05) translate(2px, -3px); opacity: 1; }
+      60% { transform: scale(1.03, 0.97) translate(-2px, 2px); opacity: 0.7; }
+      80% { transform: scale(0.98, 1.02) translate(3px, -1px); opacity: 0.9; }
+      100% { transform: none; opacity: 0; }
     }
 
     .cursor {
       display: inline-block;
       width: 10px;
-      background-color: var(--green);
+      background-color: #33ff33;
       animation: blink 1s steps(2, start) infinite;
     }
 
@@ -60,174 +60,71 @@
     .button-options {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
       gap: 10px;
       margin-top: 1em;
     }
 
     .option-btn {
-      background-color: #001100;
-      color: var(--green);
-      border: 2px solid var(--green);
-      padding: 0.6em 1.2em;
-      font-size: 1rem;
-      font-family: monospace;
-      border-radius: 6px;
-      box-shadow: var(--glow);
+      background-color: transparent;
+      color: #33ff33;
+      border: 1px solid #33ff33;
+      padding: 0.5em 1em;
       cursor: pointer;
-      transition: all 0.2s ease-in-out;
+      font-family: monospace;
+      transition: background-color 0.2s;
     }
 
     .option-btn:hover {
-      background-color: #003300;
-    }
-
-    .loading-bar-container {
-      width: 100%;
-      background-color: #111;
-      border: 1px solid var(--green);
-      margin: 1em 0;
-      position: relative;
-      height: 24px;
-      box-shadow: var(--glow);
-    }
-
-    .loading-bar {
-      height: 100%;
-      background-color: var(--green);
-      width: 0%;
-    }
-
-    .loading-percent {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      top: 0;
-      line-height: 24px;
-    }
-
-    @keyframes glitchAnim {
-      0% { transform: translate(0, 0); }
-      20% { transform: translate(-5px, 5px); }
-      40% { transform: translate(5px, -5px); }
-      60% { transform: translate(-5px, -5px); }
-      80% { transform: translate(5px, 5px); }
-      100% { transform: translate(0, 0); }
-    }
-
-    @media screen and (max-width: 600px) {
-      .option-btn {
-        flex: 1 1 40%;
-        font-size: 0.9rem;
-      }
-
-      #terminal {
-        max-width: 100%;
-        border-width: 2px;
-        padding: 0.75rem;
-      }
+      background-color: #0f0f0f;
     }
   </style>
 </head>
 <body>
   <div id="terminal"></div>
+
   <script>
     const terminal = document.getElementById("terminal");
 
-    function typeWriter(text, speed = 75, pauseAfter = 500) {
+    function typeWriter(text, delayPerChar = 50, pauseAfter = 0) {
       return new Promise(resolve => {
         let i = 0;
         const line = document.createElement("div");
         terminal.appendChild(line);
-        terminal.scrollTop = terminal.scrollHeight;
 
-        function type() {
+        const typeInterval = setInterval(() => {
           if (i < text.length) {
             line.textContent += text.charAt(i);
+            terminal.scrollTop = terminal.scrollHeight;
             i++;
-            setTimeout(type, speed);
           } else {
+            clearInterval(typeInterval);
             setTimeout(resolve, pauseAfter);
           }
-        }
-        type();
+        }, delayPerChar);
       });
     }
 
     function showGlitch(duration = 500) {
       return new Promise(resolve => {
-        const glitch = document.createElement("div");
-        glitch.style.position = "fixed";
-        glitch.style.top = 0;
-        glitch.style.left = 0;
-        glitch.style.width = "100vw";
-        glitch.style.height = "100vh";
-        glitch.style.backgroundColor = "#00ff00";
-        glitch.style.opacity = 0.15;
-        glitch.style.zIndex = 9999;
-        glitch.style.pointerEvents = "none";
-        glitch.style.mixBlendMode = "difference";
-        glitch.style.animation = "glitchAnim 0.1s steps(2, start) infinite";
-        document.body.appendChild(glitch);
-
+        const glitchOverlay = document.createElement("div");
+        glitchOverlay.className = "glitch";
+        terminal.appendChild(glitchOverlay);
         setTimeout(() => {
-          glitch.remove();
+          terminal.removeChild(glitchOverlay);
           resolve();
         }, duration);
       });
     }
 
-    function showLoadingBar(duration = 2000) {
-      return new Promise(resolve => {
-        const container = document.createElement("div");
-        container.className = "loading-bar-container";
-
-        const bar = document.createElement("div");
-        bar.className = "loading-bar";
-        const percent = document.createElement("div");
-        percent.className = "loading-percent";
-        percent.textContent = "0%";
-
-        container.appendChild(bar);
-        container.appendChild(percent);
-        terminal.appendChild(container);
-
-        let progress = 0;
-        const interval = setInterval(() => {
-          const increment = Math.floor(Math.random() * 10) + 1;
-          progress = Math.min(progress + increment, 100);
-          bar.style.width = progress + "%";
-          percent.textContent = progress + "%";
-          if (progress === 100) {
-            clearInterval(interval);
-            setTimeout(resolve, 500);
-          }
-        }, duration / 20);
-      });
-    }
-
     function renderOptions() {
-      const options = [
-        "Basics",
-        "Threats",
-        "Mental Survival",
-        "Tools",
-        "Store",
-        "About"
-      ];
+      const options = ["help", "status", "tip", "menu", "choices", "clear"];
       const container = document.createElement("div");
       container.className = "button-options";
       options.forEach(cmd => {
         const btn = document.createElement("button");
         btn.className = "option-btn";
         btn.textContent = cmd;
-        btn.onclick = async () => {
-          terminal.innerHTML = "";
-          await typeWriter(`> ${cmd} selected...`, 50, 300);
-          await showLoadingBar(1500 + Math.random() * 1000);
-          await typeWriter(`Loaded ${cmd} interface.`, 50, 500);
-          renderOptions();
-        };
+        btn.onclick = () => alert(`You chose: ${cmd}`);
         container.appendChild(btn);
       });
       terminal.appendChild(container);
@@ -235,14 +132,14 @@
     }
 
     async function bootSequence() {
+      await typeWriter("Initializing Survival Interface...", 50, 600);
+      await typeWriter("[OK] SYSTEM ONLINE", 50, 600);
+      await typeWriter("Welcome to the Survival Interface.", 50, 1000);
       await typeWriter("You didn't die", 75, 1000);
+      await typeWriter(",", 75, 500);
       await typeWriter(" now what?", 75, 1000);
-      await showGlitch(800);
-      await typeWriter("Loading Survival Interface...", 100, 800);
-      await showLoadingBar(2000);
-      await typeWriter("[OK] SYSTEM ONLINE", 60, 600);
-      await typeWriter("Welcome to the Survival Interface.", 60, 1000);
-      await typeWriter("Available Commands:", 60, 500);
+      await showGlitch(500);
+      await typeWriter("\nAvailable Commands:", 50, 800);
       renderOptions();
     }
 
