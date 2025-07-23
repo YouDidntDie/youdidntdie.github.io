@@ -61,25 +61,26 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      margin-top: 2em;
+      gap: 1rem;
+      margin-top: 2rem;
       border-left: 2px solid var(--green);
-      padding-left: 1em;
+      padding-left: 1rem;
     }
 
     .option-btn {
-      background: none;
-      border: none;
+      background-color: transparent;
       color: var(--green);
-      font-size: 1rem;
+      border: none;
+      font-size: 1.1rem;
       font-family: monospace;
-      text-align: left;
-      margin-bottom: 0.5em;
       cursor: pointer;
+      padding: 0;
       position: relative;
     }
 
     .option-btn::before {
       content: '> ';
+      color: var(--green);
     }
 
     .option-btn:hover {
@@ -111,6 +112,10 @@
     }
 
     @media screen and (max-width: 600px) {
+      .option-btn {
+        font-size: 1rem;
+      }
+
       #terminal {
         max-width: 100%;
         border-width: 2px;
@@ -179,30 +184,36 @@
 
     function renderOptions() {
       const options = [
-        { name: "Start Here", content: "You didn’t die. Good. Now learn what the hell you’re doing." },
-        { name: "Basics", content: "Water. Shelter. Fire. Food. In that order." },
-        { name: "Threats", content: "Radiation. Other survivors. Your own stupidity." },
-        { name: "Mental Survival", content: "Survival isn’t just physical. Keep your mind sharp." },
-        { name: "Tools", content: "Knives, lighters, rope. Things that won’t ghost you when you need them." },
-        { name: "Store", content: "Coming soon: Gear so good you’ll wish you were still dying." },
-        { name: "About", content: "A survival project from the ashes of common sense." }
+        "Start Here",
+        "Basics",
+        "Threats",
+        "Mental Survival",
+        "Tools",
+        "Store",
+        "About"
       ];
 
       const container = document.createElement("div");
       container.className = "button-options";
-      options.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.className = "option-btn";
-        btn.textContent = opt.name;
-        btn.onclick = async () => {
-          terminal.innerHTML = "";
-          await typeWriter(`> ${opt.name} selected...`, 50, 300);
-          await showLoadingBar(1500 + Math.random() * 1000);
-          await typeWriter(opt.content, 50, 500);
-          renderOptions();
-        };
-        container.appendChild(btn);
+
+      let delayTime = 0;
+      options.forEach((cmd, index) => {
+        setTimeout(() => {
+          const btn = document.createElement("button");
+          btn.className = "option-btn";
+          btn.textContent = cmd;
+          btn.onclick = async () => {
+            terminal.innerHTML = "";
+            await typeWriter(`> ${cmd} selected...`, 50, 300);
+            await showLoadingBar(1500 + Math.random() * 1000);
+            await typeWriter(`Loaded ${cmd} interface.`, 50, 500);
+            renderOptions();
+          };
+          container.appendChild(btn);
+        }, delayTime);
+        delayTime += 300;
       });
+
       terminal.appendChild(container);
       terminal.scrollTop = terminal.scrollHeight;
     }
@@ -217,8 +228,11 @@
       await typeWriter("Loading Survival Interface...", 100, 500);
       await showLoadingBar(2000);
       await typeWriter("[OK] SYSTEM ONLINE", 60, 600);
+      await delay(300);
       await typeWriter("Welcome to the Survival Interface.", 60, 1000);
+      await delay(300);
       await typeWriter("Available Commands:", 60, 500);
+      await delay(200);
       renderOptions();
     }
 
