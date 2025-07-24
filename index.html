@@ -134,63 +134,88 @@
     </main>
   </div>
 
-<script>
-  const CONTENT = {
-    start: `Welcome to You Didn't Die.\nYour survival bible awaits. Type or tap on sections to explore.`,
-    basics : haha lol
-    Shelter: Keep dry and insulated.\n- Food: Know edible plants and hun
-    threats: `Threats:\n- Natural: Earthquakes, floods, storms.\n- Man-made: Nuclear, social collapse, crime.\n- Animals: Know what’s dangerous in your area.`,
-    mental: `Mental Survival:\nStay calm. Prioritize tasks. Keep hope alive.\nMental strength often saves lives.`,
-    tools: `Tools:\n- Knives, multi-tools, first aid kits.\n- Backup power: batteries, solar chargers.\n- Communication: radios, signal mirrors.`,
-    store: `Store:\nComing soon: curated survival gear, essentials, and more.`,
-    about: `About:\nThis guide was created by Nick.\nDark humor and brutal honesty to keep you sane and alive.`
-  };
+<script  <script>
+    const CONTENT = {
+      start: `Booting Survival OS...`,
+      basics: `
+        <div class="accordion">
+          <button class="accordion-btn">Water</button>
+          <div class="accordion-content">
+            <p>Always purify by boiling, filtering, or using purification tablets. Avoid stagnant sources. Learn to collect rain or dew when needed.</p>
+          </div>
 
-  const nav = document.querySelector('nav');
-  const buttons = nav.querySelectorAll('button');
-  const content = document.getElementById('content');
+          <button class="accordion-btn">Fire</button>
+          <div class="accordion-content">
+            <p>Fire provides heat, light, morale, and safety. Master ferro rods, lighters, and primitive methods like bow drills.</p>
+          </div>
 
-  function setActive(button) {
-    buttons.forEach(btn => btn.classList.remove('active'));
-    button.classList.add('active');
-  }
+          <button class="accordion-btn">Shelter</button>
+          <div class="accordion-content">
+            <p>Shelter protects against exposure. Learn how to make a debris hut, tarp lean-to, or snow cave depending on terrain and climate.</p>
+          </div>
 
-  function showSection(section) {
-    if (CONTENT[section]) {
-      content.textContent = CONTENT[section];
-      content.focus();
+          <button class="accordion-btn">Food</button>
+          <div class="accordion-content">
+            <p>Know local edible plants, how to snare small game, and basic fishing. Fat and protein are essential for long-term energy.</p>
+          </div>
+        </div>
+      `,
+      threats: `Threats:\n- Natural: Earthquakes, floods, storms.\n- Man-made: Nuclear, social collapse, crime.\n- Animals: Know what’s dangerous in your area.`,
+      mental: `Mental Survival:\nStay calm. Prioritize tasks. Keep hope alive.\nMental strength often saves lives.`,
+      tools: `Tools:\n- Knives, multi-tools, first aid kits.\n- Backup power: batteries, solar chargers.\n- Communication: radios, signal mirrors.`,
+      store: `Store:\nComing soon: curated survival gear, essentials, and more.`,
+      about: `About:\nThis guide was created by Nick.\nDark humor and brutal honesty to keep you sane and alive.`
+    };
+
+    const nav = document.querySelector('nav');
+    const buttons = nav.querySelectorAll('button');
+    const content = document.getElementById('content');
+
+    function setActive(button) {
+      buttons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
     }
-  }
 
-  nav.addEventListener('click', e => {
-    if (e.target.tagName === 'BUTTON') {
-      const section = e.target.getAttribute('data-section');
-      showSection(section);
-      setActive(e.target);
+    function setupAccordion() {
+      const accordions = document.querySelectorAll('.accordion-btn');
+      accordions.forEach(btn => {
+        btn.addEventListener('click', () => {
+          btn.classList.toggle('active');
+          const panel = btn.nextElementSibling;
+          if (panel.style.maxHeight) {
+            panel.style.maxHeight = null;
+          } else {
+            panel.style.maxHeight = panel.scrollHeight + "px";
+          }
+        });
+      });
     }
-  });
 
-  // 💻 Boot Loading Bar
-  const bootBar = document.getElementById('boot-bar');
-  const boot = document.getElementById('boot');
-  let progress = 0;
+    nav.addEventListener('click', e => {
+      if (e.target.tagName === 'BUTTON') {
+        const section = e.target.getAttribute('data-section');
+        if (CONTENT[section]) {
+          content.innerHTML = CONTENT[section];
+          setActive(e.target);
+          if (section === "basics") setupAccordion();
+          content.focus();
+        }
+      }
+    });
 
-  const loadingInterval = setInterval(() => {
-    progress += Math.random() * 5 + 2; // faster fill
-    if (progress >= 100) {
-      progress = 100;
-      clearInterval(loadingInterval);
-      boot.style.opacity = 0;
-      setTimeout(() => boot.style.display = 'none', 500);
-    }
-    bootBar.style.width = progress + '%';
-  }, 80);
-
-  // Ensure default section shows after boot (optional fallback)
-  window.addEventListener('load', () => {
-    showSection('start');
-  });
-</script>
+    // Boot bar animation
+    const progressBar = document.getElementById("boot-progress");
+    let width = 0;
+    const interval = setInterval(() => {
+      if (width >= 100) {
+        clearInterval(interval);
+        content.innerHTML = CONTENT.start + "\n\nSelect a section to begin.";
+      } else {
+        width += 2;
+        progressBar.style.width = width + "%";
+      }
+    }, 50);
+  </script>
 
 
 </body>
