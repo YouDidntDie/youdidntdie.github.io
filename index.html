@@ -7,7 +7,408 @@
   <style>
     :root {
       --green: #33ff33;
-      --dark: #0d0d0d;
+      --dark: #0d0d0d;<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>You Didn't Die - Survival OS</title>
+  <style>
+    /* --- Reset & base --- */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background-color: #000;
+      color: #00ff99;
+      font-family: 'Courier New', Courier, monospace;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    a {
+      color: #00ff99;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* --- Logo --- */
+    .logo {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      width: 80px;
+      height: 80px;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* --- Intro --- */
+    #intro {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      font-size: 2rem;
+      white-space: nowrap;
+    }
+    #intro > div {
+      margin: 0.2rem 0;
+      min-width: 300px;
+      max-width: 90vw;
+    }
+
+    /* --- Hazard loader --- */
+    #hazard-loader {
+      display: none;
+      height: 100vh;
+      width: 100vw;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    .hazard-svg {
+      width: 120px;
+      height: 120px;
+      stroke: #00ff99;
+      stroke-width: 8;
+      fill: none;
+      stroke-dasharray: 283;
+      stroke-dashoffset: 283;
+      animation: hazard-progress 4s linear forwards;
+    }
+    #percentage {
+      position: absolute;
+      top: 60%;
+      width: 100%;
+      font-size: 1.5rem;
+      text-align: center;
+      user-select: none;
+    }
+
+    @keyframes hazard-progress {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    /* --- Menu & layout --- */
+    #app {
+      display: none;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: row;
+      background: #000;
+    }
+
+    /* Sidebar */
+    nav {
+      background: #001a0d;
+      border-right: 2px solid #00ff99;
+      width: 220px;
+      min-width: 220px;
+      padding: 1rem 0;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+    nav h2 {
+      color: #00ff99;
+      font-weight: bold;
+      font-size: 1.5rem;
+      text-align: center;
+      margin-bottom: 1rem;
+      letter-spacing: 0.1rem;
+    }
+    nav button {
+      background: transparent;
+      border: none;
+      color: #00ff99;
+      border-top: 1.5px solid #00ff99;
+      border-bottom: 1.5px solid #00ff99;
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      text-align: left;
+      cursor: pointer;
+      transition: background-color 0.25s ease-in-out;
+      outline-offset: 3px;
+      outline-color: #00ff99;
+      outline-style: none;
+    }
+    nav button:hover,
+    nav button.active {
+      background-color: #003322;
+    }
+    nav button:focus {
+      outline-style: solid;
+    }
+
+    /* Main content */
+    main {
+      flex-grow: 1;
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      color: #00ff99;
+      font-size: 1rem;
+      line-height: 1.5;
+      max-height: 100vh;
+      -webkit-overflow-scrolling: touch;
+    }
+    main h1, main h2 {
+      margin-top: 0;
+      font-weight: 700;
+    }
+    main h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    main h2 {
+      font-size: 1.5rem;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid #00ff99;
+      padding-bottom: 0.25rem;
+    }
+    main p {
+      margin-bottom: 1rem;
+    }
+    main ul {
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Back button */
+    #back-btn {
+      background: transparent;
+      border: 2px solid #00ff99;
+      color: #00ff99;
+      padding: 8px 16px;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      display: none;
+      width: fit-content;
+      transition: background-color 0.25s ease-in-out;
+    }
+    #back-btn:hover {
+      background-color: #003322;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      nav {
+        width: 140px;
+        min-width: 140px;
+      }
+      nav button {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+      }
+      main {
+        padding: 1rem;
+        font-size: 0.9rem;
+      }
+      .logo {
+        width: 60px;
+        height: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <img src="https://via.placeholder.com/80x80?text=LOGO" alt="Logo" class="logo" />
+
+  <!-- Intro -->
+  <div id="intro" aria-label="Introduction">
+    <div id="line1"></div>
+    <div id="line2"></div>
+  </div>
+
+  <!-- Hazard Loader -->
+  <div id="hazard-loader" aria-label="Loading Hazard Indicator">
+    <svg class="hazard-svg" viewBox="0 0 100 100" role="img" aria-hidden="true" >
+      <circle cx="50" cy="50" r="45" />
+    </svg>
+    <div id="percentage">0%</div>
+  </div>
+
+  <!-- Main app -->
+  <div id="app" role="main">
+    <nav aria-label="Main navigation">
+      <h2>You Didn't Die</h2>
+      <button data-section="start" class="active">Start Here</button>
+      <button data-section="basics">Basics</button>
+      <button data-section="threats">Threats</button>
+      <button data-section="mental">Mental Survival</button>
+      <button data-section="tools">Tools</button>
+      <button data-section="store">Store</button>
+      <button data-section="about">About</button>
+    </nav>
+    <main>
+      <button id="back-btn" aria-label="Go back to menu">← Back</button>
+      <section id="content">
+        <!-- Content loads here -->
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Typewriter effect
+    function typeText(text, element, delay = 100, startDelay = 0) {
+      element.textContent = '';
+      let i = 0;
+      setTimeout(() => {
+        const interval = setInterval(() => {
+          element.textContent += text.charAt(i);
+          i++;
+          if (i >= text.length) clearInterval(interval);
+        }, delay);
+      }, startDelay);
+    }
+
+    // Content for sections
+    const CONTENT = {
+      start: `
+        <h1>Welcome to You Didn't Die</h1>
+        <p>This is your survival bible, the last resource you’ll ever need.</p>
+        <p>Pick a category on the left to dive deep into practical guides, real threats, mental survival, and tools.</p>
+        <p>Remember: You didn't die... now what?</p>
+      `,
+      basics: `
+        <h1>Basics</h1>
+        <h2>Water</h2>
+        <p>Water is life. Always have a way to purify it:</p>
+        <ul>
+          <li>Boiling</li>
+          <li>Filtration</li>
+          <li>Chemical treatment</li>
+        </ul>
+        <h2>Fire</h2>
+        <p>Master fire starting — it's essential for warmth, cooking, and signaling.</p>
+      `,
+      threats: `
+        <h1>Threats</h1>
+        <h2>Natural</h2>
+        <p>Earthquakes, floods, hurricanes — prepare by knowing your area's risks.</p>
+        <h2>Man-Made</h2>
+        <p>From nuclear blasts to social collapse, understand the signs and how to react.</p>
+      `,
+      mental: `
+        <h1>Mental Survival</h1>
+        <p>Survival isn’t just physical — your mind is the ultimate weapon. Stay calm, focused, and adaptable.</p>
+      `,
+      tools: `
+        <h1>Tools</h1>
+        <p>Gear matters. Stockpile knives, multi-tools, first aid kits, and backup power.</p>
+      `,
+      store: `
+        <h1>Store</h1>
+        <p>Coming soon: your one-stop shop for curated survival gear and essentials.</p>
+      `,
+      about: `
+        <h1>About</h1>
+        <p>You Didn't Die is built to be your sarcastic, brutally honest survival guide.</p>
+        <p>Created by Nick, blending dark humor with practical knowledge.</p>
+      `
+    };
+
+    // Initialize
+    const intro = document.getElementById('intro');
+    const line1 = document.getElementById('line1');
+    const line2 = document.getElementById('line2');
+    const loader = document.getElementById('hazard-loader');
+    const percentage = document.getElementById('percentage');
+    const app = document.getElementById('app');
+    const menuButtons = document.querySelectorAll('nav button');
+    const content = document.getElementById('content');
+    const backBtn = document.getElementById('back-btn');
+
+    // Track navigation state
+    let historyStack = [];
+
+    // Show content by section
+    function showSection(section) {
+      content.innerHTML = CONTENT[section] || '<p>Coming soon...</p>';
+      backBtn.style.display = historyStack.length > 0 ? 'inline-block' : 'none';
+    }
+
+    // Navigation handler
+    function onNavClick(e) {
+      const section = e.target.getAttribute('data-section');
+      if (!section) return;
+
+      // Push current section to history
+      if (content.innerHTML) {
+        historyStack.push(currentSection);
+      }
+      currentSection = section;
+
+      // Highlight active
+      menuButtons.forEach(btn => btn.classList.remove('active'));
+      e.target.classList.add('active');
+
+      showSection(section);
+    }
+
+    // Back button handler
+    backBtn.addEventListener('click', () => {
+      if (historyStack.length === 0) return;
+      currentSection = historyStack.pop();
+
+      // Highlight active
+      menuButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-section') === currentSection);
+      });
+
+      showSection(currentSection);
+    });
+
+    // Attach nav event listeners
+    menuButtons.forEach(btn => btn.addEventListener('click', onNavClick));
+
+    // Startup sequence
+    window.addEventListener('load', () => {
+      // Type intro text
+      typeText("You didn't die", line1, 100, 500);
+      typeText("now what?", line2, 100, 2200);
+
+      // After intro, show loader
+      setTimeout(() => {
+        intro.style.display = 'none';
+        loader.style.display = 'flex';
+
+        let percent = 0;
+        const interval = setInterval(() => {
+          percent += Math.floor(Math.random() * 10) + 5;
+          if (percent > 100) percent = 100;
+          percentage.textContent = percent + '%';
+          if (percent === 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+              loader.style.display = 'none';
+              app.style.display = 'flex';
+              // Show start section
+              currentSection = 'start';
+              menuButtons.forEach(btn => btn.classList.remove('active'));
+              document.querySelector('nav button[data-section="start"]').classList.add('active');
+              showSection(currentSection);
+            }, 500);
+          }
+        }, 300);
+      }, 4000);
+    });
+
+    let currentSection = 'start';
+  </script>
+</body>
+</html>
+
       --glow: 0 0 8px var(--green);
     }
 
