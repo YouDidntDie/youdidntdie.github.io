@@ -134,40 +134,56 @@
     </main>
   </div>
 
-  <script>
-    const CONTENT = {
-      start: `Welcome to You Didn't Die.\nYour survival bible awaits. Type or tap on sections to explore.`,
-      basics: `Basics:\n- Water: Always purify by boiling, filtering, or chemicals.\n- Fire: Master it for warmth, cooking, signaling.\n- Shelter: Keep dry and insulated.\n- Food: Know edible plants and hunting basics.`,
-      threats: `Threats:\n- Natural: Earthquakes, floods, storms.\n- Man-made: Nuclear, social collapse, crime.\n- Animals: Know what’s dangerous in your area.`,
-      mental: `Mental Survival:\nStay calm. Prioritize tasks. Keep hope alive.\nMental strength often saves lives.`,
-      tools: `Tools:\n- Knives, multi-tools, first aid kits.\n- Backup power: batteries, solar chargers.\n- Communication: radios, signal mirrors.`,
-      store: `Store:\nComing soon: curated survival gear, essentials, and more.`,
-      about: `About:\nThis guide was created by Nick.\nDark humor and brutal honesty to keep you sane and alive.`
-    };
+ <script>
+  const CONTENT = { /* your section content */ };
 
-    const nav = document.querySelector('nav');
-    const buttons = nav.querySelectorAll('button');
-    const content = document.getElementById('content');
+  const nav = document.querySelector('nav');
+  const buttons = nav.querySelectorAll('button');
+  const content = document.getElementById('content');
 
-    function setActive(button) {
-      buttons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-    }
+  function setActive(button) {
+    buttons.forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+  }
 
-    nav.addEventListener('click', e => {
-      if(e.target.tagName === 'BUTTON') {
-        const section = e.target.getAttribute('data-section');
-        if(CONTENT[section]) {
-          content.textContent = CONTENT[section];
-          setActive(e.target);
-          content.focus();
-        }
+  function typeText(element, text, speed = 15) {
+    element.textContent = '';
+    let i = 0;
+    function type() {
+      if (i < text.length) {
+        element.textContent += text[i++];
+        setTimeout(type, speed);
       }
-    });
-    
-    setTimeout(() => {
-  document.getElementById('boot').style.display = 'none';
-}, 2000);
-  </script>
+    }
+    type();
+  }
+
+  nav.addEventListener('click', e => {
+    if (e.target.tagName === 'BUTTON') {
+      const section = e.target.getAttribute('data-section');
+      if (CONTENT[section]) {
+        typeText(content, CONTENT[section]);
+        setActive(e.target);
+        content.focus();
+      }
+    }
+  });
+
+  // 🔥 Boot loading bar animation
+  const bootBar = document.getElementById('boot-bar');
+  let progress = 0;
+  const loadingInterval = setInterval(() => {
+    progress += Math.random() * 5 + 1; // simulate messy loading
+    if (progress >= 100) {
+      progress = 100;
+      clearInterval(loadingInterval);
+      setTimeout(() => {
+        document.getElementById('boot').style.display = 'none';
+      }, 300); // slight delay after full bar
+    }
+    bootBar.style.width = progress + '%';
+  }, 80); // adjust for speed
+</script>
+
 </body>
 </html>
