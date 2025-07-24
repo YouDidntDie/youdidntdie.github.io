@@ -109,9 +109,13 @@
   </style>
 </head>
 <body>
-  <div id="boot" style="position:fixed;top:0;left:0;width:100%;height:100%;background:black;color:limegreen;display:flex;align-items:center;justify-content:center;font-family:monospace;z-index:9999;">
-  <div id="boot-text">Booting survival OS...</div>
-  </div>
+   <div id="boot" style="position:fixed;top:0;left:0;width:100%;height:100%;background:black;color:limegreen;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:monospace;z-index:9999;">
+   <div id="boot-text" style="font-size:1.2rem;">Booting survival OS...</div>
+   <div id="boot-bar-container" style="width:80%;max-width:600px;height:1.2rem;border:1px solid limegreen;margin-top:1rem;">
+     <div id="boot-bar" style="height:100%;width:0%;background:limegreen;"></div>
+   </div>
+ </div>
+
 
   <header>You Didn’t Die — Survival Guide</header>
   <div id="container">
