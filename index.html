@@ -232,17 +232,18 @@
     });
 
     // Boot bar animation
-    const progressBar = document.getElementById("boot-progress");
-    let width = 0;
-    const interval = setInterval(() => {
-      if (width >= 100) {
-        clearInterval(interval);
-        content.innerHTML = CONTENT.start + "\n\nSelect a section to begin.";
-      } else {
-        width += 2;
-        progressBar.style.width = width + "%";
-      }
-    }, 50);
+const progressBar = document.getElementById("boot-progress");
+let width = 0;
+const interval = setInterval(() => {
+  if (width >= 100) {
+    clearInterval(interval);
+    document.getElementById("boot").style.display = "none"; // THIS LINE
+    content.innerHTML = CONTENT.start + "\n\nSelect a section to begin.";
+  } else {
+    width += 2;
+    progressBar.style.width = width + "%";
+  }
+}, 50);
   </script>
 
 
