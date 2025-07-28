@@ -222,6 +222,14 @@
         });
       });
     }
+    function setupAccordion() {
+  const accordions = document.querySelectorAll('.accordion-btn');
+  accordions.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('active');
+    });
+  });
+}
 
     nav.addEventListener('click', e => {
       if (e.target.tagName === 'BUTTON') {
