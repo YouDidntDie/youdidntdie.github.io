@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,9 +10,10 @@
       --dark: #000;
       --glow: 0 0 8px var(--green);
       --font: 'Courier New', Courier, monospace;
+      --link-green: #55ff55;
     }
     body {
-      margin:0;
+      margin:0; 
       height:100vh;
       background: var(--dark);
       color: var(--green);
@@ -75,6 +76,30 @@
       font-size: 1.1rem;
       line-height: 1.4;
       white-space: pre-wrap;
+      position: relative;
+    }
+    main a.link {
+      color: var(--link-green);
+      cursor: pointer;
+      text-decoration: underline;
+      user-select: none;
+    }
+    main a.link:hover {
+      color: #88ff88;
+      text-shadow: 0 0 10px #88ff88;
+    }
+    button.back-btn {
+      margin-bottom: 1rem;
+      background: transparent;
+      border: 1px solid var(--green);
+      padding: 0.4rem 1rem;
+      color: var(--green);
+      font-family: var(--font);
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: var(--glow);
+      user-select: none;
+      display: inline-block;
     }
     @media (max-width: 700px) {
       #container {
@@ -106,13 +131,43 @@
         padding: 1rem;
       }
     }
+    /* Boot overlay */
+    #boot {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: black;
+      color: limegreen;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: monospace;
+      z-index: 9999;
+    }
+    #boot-text {
+      font-size: 1.2rem;
+    }
+    #boot-bar-container {
+      width: 80%; max-width: 600px;
+      height: 1.2rem;
+      border: 1px solid limegreen;
+      margin-top: 1rem;
+    }
+    #boot-bar {
+      height: 100%;
+      width: 0%;
+      background: limegreen;
+      transition: width 0.1s linear;
+    }
   </style>
 </head>
 <body>
-  <div id="boot" style="position:fixed;top:0;left:0;width:100%;height:100%;background:black;color:limegreen;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:monospace;z-index:9999;">
-    <div id="boot-text" style="font-size:1.2rem;">Booting survival OS...</div>
-    <div id="boot-bar-container" style="width:80%;max-width:600px;height:1.2rem;border:1px solid limegreen;margin-top:1rem;">
-      <div id="boot-bar" style="height:100%;width:0%;background:limegreen;"></div>
+
+  <div id="boot">
+    <div id="boot-text">Booting survival OS...</div>
+    <div id="boot-bar-container">
+      <div id="boot-bar"></div>
     </div>
   </div>
 
@@ -133,69 +188,250 @@
     </main>
   </div>
 
-  <script>
-    const CONTENT = {
-      start: "Welcome to 'You Didn’t Die'.\nThat’s unfortunate — now you have to survive.\nSelect a section to learn how not to screw that up.",
-      basics: 
-        "Basics of Not Dying:\n\n" +
-        "▶ Water\nStay hydrated or die trying. Avoid green sludge unless you're aiming for gastrointestinal roulette.\n\n" +
-        "▶ Fire\nMake fire unless you're cold-blooded. Lighters, ferro rods, or rubbing two egos together.\n\n" +
-        "▶ Shelter\nKeep the rain off your face and the bears out of your sleeping bag. Tarps are cheaper than tombstones.\n\n" +
-        "▶ Food\nIf it’s not trying to eat you, maybe you can eat it. Learn edible plants, small game traps, and fishing without crying.\n",
-      threats: 
-        "Threats You Probably Deserve:\n\n" +
-        "- Natural: Earthquakes, floods, storms — Mother Nature has hands.\n" +
-        "- Man-made: Nukes, riots, economic collapse. Thanks, humanity.\n" +
-        "- Wildlife: Some animals are cute. Some want your face.\n",
-      mental: 
-        "Mental Survival:\n\n" +
-        "Your worst enemy is probably you. Stay calm, don't panic, and definitely don't talk to volleyballs unless absolutely necessary.\n",
-      tools: 
-        "Tools of the Trade:\n\n" +
-        "- Blade: A good knife is worth more than your college degree out here.\n" +
-        "- Multi-tool: Be the Swiss Army human.\n" +
-        "- Light: Solar, crank, or just scream until someone notices.\n" +
-        "- First Aid: You will get hurt. Try not to die from a papercut.\n" +
-        "- Signal: Mirrors, radios, flares, interpretive dance if desperate.\n",
-      store: 
-        "Store:\n\n" +
-        "Coming soon — overpriced gear you’ll wish you had before things went sideways.\nUntil then, try duct tape and prayers.\n",
-      about: 
-        "About This Trash Fire:\n\n" +
-        "Written by a sarcastic AI and a guy named Nick who thought surviving should be as funny as it is miserable.\n"
-    };
+<script>
+  // Your content hierarchy: main sections, then subtopics, then deep pages.
+  const CONTENT = {
+    start: {
+      type: "text",
+      data: `Welcome to You Didn’t Die.\nYour survival bible awaits. Select a section to get started.`
+    },
+    basics: {
+      type: "submenu",
+      data: [
+        { id: "water", label: "Water" },
+        { id: "fire", label: "Fire" },
+        { id: "shelter", label: "Shelter" },
+        { id: "food", label: "Food" },
+      ]
+    },
+    basics_pages: {
+      water: {
+        type: "page",
+        title: "Water — The Elixir of Life",
+        content: `Water is the foundation of survival. Always purify by boiling, filtering, or using purification tablets. Avoid stagnant sources. You can collect rain, dew, or even dig for roots with moisture.\n\nIf you’re lost in a zombie apocalypse, remember: drinking from a murky puddle is a gamble with death.\n\nSee also: [fire], [shelter], and check out our [store].`
+      },
+      fire: {
+        type: "page",
+        title: "Fire — Your Best Friend in the Darkness",
+        content: `Fire provides heat, light, morale, and safety. Master ferro rods, lighters, and primitive methods like bow drills. Fire scares away animals and keeps your spirits from collapsing.\n\nGot no lighter? Your teeth and stick will become best friends. Learn the old ways.\n\nSee also: [water], [tools], and browse our [store] for fire-starting gear.`
+      },
+      shelter: {
+        type: "page",
+        title: "Shelter — Your Fortress Against Nature",
+        content: `Shelter protects you from exposure. Learn how to build debris huts, tarp lean-tos, and snow caves, depending on your terrain and climate.\n\nRemember, a dry bum is a happy bum.\n\nSee also: [fire], [water], and our [store] for tarps and insulation gear.`
+      },
+      food: {
+        type: "page",
+        title: "Food — The Fuel That Keeps You Going",
+        content: `Know local edible plants, how to snare small game, and basic fishing techniques. Fat and protein are essential for long-term energy.\n\nDon’t eat that weird mushroom unless you want to star in your own horror show.\n\nSee also: [water], [tools], and the [store] for snares and fishing kits.`
+      }
+    },
+    threats: {
+      type: "submenu",
+      data: [
+        { id: "natural", label: "Natural Threats" },
+        { id: "manmade", label: "Man-Made Threats" },
+        { id: "animals", label: "Animal Threats" }
+      ]
+    },
+    threats_pages: {
+      natural: {
+        type: "page",
+        title: "Natural Threats — Mother Nature’s Wrath",
+        content: `Earthquakes, floods, storms — nature doesn’t care if you’re prepared.\n\nPrepare or die, simple as that.\n\nSee also: [shelter], [tools].`
+      },
+      manmade: {
+        type: "page",
+        title: "Man-Made Threats — The Collapse Is Real",
+        content: `Nuclear fallout, social collapse, rampant crime — when society drops the ball, survival gets personal.\n\nStay alert, stay alive.\n\nSee also: [mental], [tools], [store].`
+      },
+      animals: {
+        type: "page",
+        title: "Animal Threats — Predators and Pests",
+        content: `Know what’s dangerous in your area: venomous snakes, wild dogs, or rabid raccoons.\n\nKeep your knife handy.\n\nSee also: [tools], [store].`
+      }
+    },
+    mental: {
+      type: "page",
+      title: "Mental Survival — The Fight Inside Your Head",
+      content: `Stay calm. Prioritize tasks. Keep hope alive.\n\nMental strength often saves lives when the body wants to quit.\n\nSee also: [store].`
+    },
+    tools: {
+      type: "page",
+      title: "Tools — Your Lifeline",
+      content: `Knives, multi-tools, first aid kits, batteries, solar chargers, radios, signal mirrors.\n\nChoose wisely. Your life depends on it.\n\nSee also: [store].`
+    },
+    store: {
+      type: "page",
+      title: "Store — Gear Up or Die Trying",
+      content: `Coming soon: curated survival gear, essentials, and more. Check back often.\n\nAnd no, we don’t sell rabbit legs yet.`
+    },
+    about: {
+      type: "page",
+      title: "About — The Sarcastic Survival Guide",
+      content: `Created by Nick.\nDark humor and brutal honesty to keep you sane and alive.`
+    }
+  };
 
-    const nav = document.querySelector('nav');
-    const buttons = nav.querySelectorAll('button');
-    const content = document.getElementById('content');
-    const bootScreen = document.getElementById('boot');
-    const bootBar = document.getElementById('boot-bar');
+  // Keywords that get auto-linked inside content. Format: keyword → target id (section or store)
+  const KEYWORD_LINKS = {
+    water: { section: "basics", page: "water" },
+    fire: { section: "basics", page: "fire" },
+    shelter: { section: "basics", page: "shelter" },
+    food: { section: "basics", page: "food" },
+    tools: { section: "tools" },
+    store: { section: "store" },
+    mental: { section: "mental" }
+  };
 
-    function setActive(button) {
-      buttons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
+  const nav = document.querySelector('nav');
+  const buttons = nav.querySelectorAll('button');
+  const content = document.getElementById('content');
+
+  // Current navigation stack for back button support
+  let navStack = [];
+
+  // Utility to escape html special chars (just in case)
+  function escapeHTML(str) {
+    return str.replace(/[&<>"']/g, m => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[m]));
+  }
+
+  // Replace keywords with links
+  function linkifyContent(text) {
+    // Sort keys by length desc to avoid partial replacements inside words
+    const keys = Object.keys(KEYWORD_LINKS).sort((a,b)=>b.length - a.length);
+    let linked = escapeHTML(text);
+    for (const key of keys) {
+      // Use word boundaries to avoid partial word matching
+      const regex = new RegExp(`\\b${key}\\b`, 'gi');
+      linked = linked.replace(regex, match => {
+        return `<a href="#" class="link" data-keyword="${key}">${match}</a>`;
+      });
+    }
+    // Replace newlines with <br>
+    return linked.replace(/\n/g, "<br>");
+  }
+
+  function renderStart() {
+    content.innerHTML = `<pre>${escapeHTML(CONTENT.start.data)}</pre>`;
+  }
+
+  function renderSubmenu(sectionId) {
+    const submenu = CONTENT[sectionId];
+    if (!submenu || submenu.type !== "submenu") return;
+
+    let html = `<div><button class="back-btn" style="display:none;">&larr; Back</button>`;
+    html += `<h2>${sectionId.charAt(0).toUpperCase() + sectionId.slice(1)}</h2><ul>`;
+    submenu.data.forEach(item => {
+      html += `<li><button class="submenu-btn" data-id="${item.id}">${item.label}</button></li>`;
+    });
+    html += `</ul></div>`;
+
+    content.innerHTML = html;
+
+    // Back button hidden on submenu level
+    const backBtn = content.querySelector('.back-btn');
+    backBtn.style.display = "none";
+
+    // Submenu buttons event
+    content.querySelectorAll('.submenu-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        navStack.push({type:"submenu", section:sectionId});
+        renderPage(sectionId, btn.dataset.id);
+      });
+    });
+  }
+
+  function renderPage(sectionId, pageId=null) {
+    let pageData;
+
+    if(pageId) {
+      pageData = CONTENT[sectionId + "_pages"]?.[pageId];
+    } else {
+      pageData = CONTENT[sectionId];
+      if(pageData?.type === "submenu") {
+        renderSubmenu(sectionId);
+        return;
+      }
     }
 
-    nav.addEventListener('click', e => {
-      if (e.target.tagName === 'BUTTON') {
-        const section = e.target.getAttribute('data-section');
-        if (CONTENT[section]) {
-          content.textContent = CONTENT[section];
-          setActive(e.target);
-          content.focus();
+    if (!pageData) {
+      content.innerHTML = `<pre>Page not found. You fucked up somewhere.</pre>`;
+      return;
+    }
+
+    let html = `<button class="back-btn">&larr; Back</button>`;
+    html += `<h2>${escapeHTML(pageData.title)}</h2>`;
+    html += `<p>${linkifyContent(pageData.content)}</p>`;
+
+    content.innerHTML = html;
+
+    // Back button event
+    const backBtn = content.querySelector('.back-btn');
+    backBtn.addEventListener('click', e => {
+      if(navStack.length) {
+        const last = navStack.pop();
+        if(last.type === "submenu") {
+          renderSubmenu(last.section);
+        } else if(last.type === "page") {
+          renderPage(last.section, last.page);
+        } else {
+          renderStart();
         }
+      } else {
+        renderStart();
       }
     });
 
-    let bootProgress = 0;
-    const bootInterval = setInterval(() => {
-      bootProgress += 2;
-      bootBar.style.width = bootProgress + "%";
-      if (bootProgress >= 100) {
-        clearInterval(bootInterval);
-        bootScreen.style.display = "none";
-      }
-    }, 50);
-  </script>
+    // Link clicks inside content
+    content.querySelectorAll('a.link').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const kw = link.dataset.keyword.toLowerCase();
+        const target = KEYWORD_LINKS[kw];
+        if(!target) return;
+        navStack.push({type:"page", section:sectionId, page:pageId});
+        if(target.page) {
+          renderPage(target.section, target.page);
+        } else {
+          renderPage(target.section);
+        }
+      });
+    });
+  }
+
+  // Sets main nav active button
+  function setActive(button) {
+    buttons.forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+  }
+
+  // Main nav click
+  nav.addEventListener('click', e => {
+    if(e.target.tagName === "BUTTON") {
+      const section = e.target.getAttribute('data-section');
+      setActive(e.target);
+      navStack = [];
+      renderPage(section);
+    }
+  });
+
+  // Boot bar animation
+  const boot = document.getElementById('boot');
+  const bootBar = document.getElementById('boot-bar');
+  let width = 0;
+  const interval = setInterval(() => {
+    if(width >= 100) {
+      clearInterval(interval);
+      boot.style.display = "none";
+      renderStart();
+    } else {
+      width += 2;
+      bootBar.style.width = width + "%";
+    }
+  }, 40);
+
+</script>
+
 </body>
 </html>
