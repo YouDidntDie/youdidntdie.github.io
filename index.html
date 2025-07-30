@@ -68,15 +68,77 @@
     }
     main {
       flex-grow: 1;
-      padding: 2rem;
+      padding: 1.5rem 2rem;
       overflow-y: auto;
       background: #001a0d;
       box-shadow: inset 0 0 10px #004422;
       font-size: 1.1rem;
       line-height: 1.4;
-      white-space: pre-wrap;
+      white-space: normal;
       max-height: calc(100vh - 52px);
       box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Submenu container inside main content */
+    #submenu {
+      margin-bottom: 1rem;
+      padding-left: 1rem;
+      border-left: 2px solid var(--green);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    #submenu a {
+      color: var(--green);
+      text-decoration: none;
+      font-family: var(--font);
+      border: 1px solid var(--green);
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+    #submenu a:hover {
+      background-color: #003322;
+      box-shadow: var(--glow);
+    }
+    /* Scrollbar hiding for nav */
+    nav {
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none;  /* IE and Edge */
+    }
+    nav::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+    }
+    /* Accordion styles */
+    .accordion-btn {
+      background: transparent;
+      border: 1px solid var(--green);
+      color: var(--green);
+      font-family: var(--font);
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      margin-bottom: 0.2rem;
+      user-select: none;
+      transition: background-color 0.25s ease;
+      border-radius: 4px;
+    }
+    .accordion-btn.active, .accordion-btn:hover {
+      background-color: #003322;
+      box-shadow: var(--glow);
+    }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      padding-left: 1rem;
+      margin-bottom: 1rem;
+      user-select: text;
     }
     @media (max-width: 700px) {
       #container {
@@ -107,6 +169,11 @@
       main {
         padding: 1rem;
       }
+      #submenu {
+        border-left: none;
+        padding-left: 0;
+        justify-content: center;
+      }
     }
   </style>
 </head>
@@ -130,96 +197,63 @@
       <button data-section="about">About</button>
     </nav>
     <main id="content" tabindex="0" aria-live="polite" aria-atomic="true">
-      Welcome to You Didn’t Die.
-      Your survival bible awaits. Select a section to get started.
+      <div id="submenu"></div>
+      <div id="main-text">
+        Welcome to You Didn’t Die.
+        Your survival bible awaits. Select a section to get started.
+      </div>
     </main>
   </div>
 
   <script>
-    const CONTENT = {
-      start: `Welcome to You Didn't Die.\nYour survival bible awaits. Type or tap on sections to explore.`,
-      basics: `
-        <div class="accordion">
-          <button class="accordion-btn">Water</button>
-          <div class="accordion-content" style="max-height:0;overflow:hidden;transition:max-height 0.3s ease;">
-            <p>Always purify by boiling, filtering, or using purification tablets. Avoid stagnant sources. Learn to collect rain or dew when needed.</p>
-          </div>
-
-          <button class="accordion-btn">Fire</button>
-          <div class="accordion-content" style="max-height:0;overflow:hidden;transition:max-height 0.3s ease;">
-            <p>Fire provides heat, light, morale, and safety. Master ferro rods, lighters, and primitive methods like bow drills.</p>
-          </div>
-
-          <button class="accordion-btn">Shelter</button>
-          <div class="accordion-content" style="max-height:0;overflow:hidden;transition:max-height 0.3s ease;">
-            <p>Shelter protects against exposure. Learn how to make a debris hut, tarp lean-to, or snow cave depending on terrain and climate.</p>
-          </div>
-
-          <button class="accordion-btn">Food</button>
-          <div class="accordion-content" style="max-height:0;overflow:hidden;transition:max-height 0.3s ease;">
-            <p>Know local edible plants, how to snare small game, and basic fishing. Fat and protein are essential for long-term energy.</p>
-          </div>
-        </div>
-      `,
-      threats: `Threats:\n- Natural: Earthquakes, floods, storms.\n- Man-made: Nuclear, social collapse, crime.\n- Animals: Know what’s dangerous in your area.`,
-      mental: `Mental Survival:\nStay calm. Prioritize tasks. Keep hope alive.\nMental strength often saves lives.`,
-      tools: `Tools:\n- Knives, multi-tools, first aid kits.\n- Backup power: batteries, solar chargers.\n- Communication: radios, signal mirrors.`,
-      store: `Store:\nComing soon: curated survival gear, essentials, and more.`,
-      about: `About:\nThis guide was created by Nick.\nDark humor and brutal honesty to keep you sane and alive.`
-    };
-
-    const nav = document.querySelector('nav');
-    const buttons = nav.querySelectorAll('button');
-    const content = document.getElementById('content');
-    const bootScreen = document.getElementById('boot');
-    const bootBar = document.getElementById('boot-bar');
-
-    function setActive(button) {
-      buttons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-    }
-
-    function setupAccordion() {
-      const accordions = document.querySelectorAll('.accordion-btn');
-      accordions.forEach(btn => {
-        btn.addEventListener('click', () => {
-          btn.classList.toggle('active');
-          const panel = btn.nextElementSibling;
-          if (panel.style.maxHeight && panel.style.maxHeight !== "0px") {
-            panel.style.maxHeight = "0";
-          } else {
-            panel.style.maxHeight = panel.scrollHeight + "px";
-          }
-        });
-      });
-    }
-
-    nav.addEventListener('click', e => {
-      if (e.target.tagName === 'BUTTON') {
-        const section = e.target.getAttribute('data-section');
-        if (CONTENT[section]) {
-          content.innerHTML = CONTENT[section];
-          setActive(e.target);
-          if (section === "basics") setupAccordion();
-          content.focus();
-        }
-      }
-    });
-
-    // Boot bar animation
-    let width = 0;
-    const interval = setInterval(() => {
-      if (width >= 100) {
-        clearInterval(interval);
-        bootScreen.style.display = "none"; // Hide boot screen when done
-        content.innerHTML = CONTENT.start + "\n\nSelect a section to begin.";
-        // Focus content only after DOM update
-        setTimeout(() => content.focus(), 10);
-      } else {
-        width += 2;
-        bootBar.style.width = width + "%";
-      }
-    }, 50);
-  </script>
-</body>
-</html>
+    // Content structure with subpages and main pages
+    const DATA = {
+      start: {
+        content: `Welcome to You Didn't Die.\nYour survival bible awaits. Select a section to get started.`,
+        submenu: []
+      },
+      basics: {
+        content: `
+          <p>Basics are the bedrock of survival. Master these and you'll be one step closer to not dying.</p>
+          <p>Select a topic below to dive deep:</p>
+        `,
+        submenu: ['Water', 'Fire', 'Shelter', 'Food']
+      },
+      'basics/water': {
+        content: `
+          <h2>Water</h2>
+          <p>Water is life, dumbass. Always purify by boiling, filtering, or using purification tablets. Avoid stagnant sources. Learn to collect rain or dew when needed.</p>
+          <p>Check out <a href="#" data-link="tools/filters">Water Filters</a> in our store for quick solutions.</p>
+        `,
+        submenu: []
+      },
+      'basics/fire': {
+        content: `
+          <h2>Fire</h2>
+          <p>Fire provides heat, light, morale, and safety. Master ferro rods, lighters, and primitive methods like bow drills.</p>
+          <p>Grab a <a href="#" data-link="tools/ferro-rod">ferro rod</a> or a <a href="#" data-link="tools/lighters">lighter</a> from the store to get started.</p>
+        `,
+        submenu: []
+      },
+      'basics/shelter': {
+        content: `
+          <h2>Shelter</h2>
+          <p>Shelter protects against exposure. Learn how to make a debris hut, tarp lean-to, or snow cave depending on terrain and climate.</p>
+          <p>Check our <a href="#" data-link="tools/tarps">tarps</a> and <a href="#" data-link="tools/ropes">ropes</a> in the store.</p>
+        `,
+        submenu: []
+      },
+      'basics/food': {
+        content: `
+          <h2>Food</h2>
+          <p>Know local edible plants, how to snare small game, and basic fishing. Fat and protein are essential for long-term energy.</p>
+          <p>See <a href="#" data-link="tools/traps">traps</a> and <a href="#" data-link="tools/fishing-gear">fishing gear</a> in the store.</p>
+        `,
+        submenu: []
+      },
+      threats: {
+        content: `
+          <h2>Threats</h2>
+          <p>Here’s the lowdown on what might kill you:</p>
+          <ul>
+            <li><a href="#" data-link="threats/z
