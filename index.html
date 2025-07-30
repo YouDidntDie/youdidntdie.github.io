@@ -75,7 +75,6 @@
       font-size: 1.1rem;
       line-height: 1.4;
       white-space: pre-wrap;
-      height: auto;
       max-height: calc(100vh - 52px);
       box-sizing: border-box;
     }
@@ -125,4 +124,102 @@
       <button data-section="start" class="active">Start Here</button>
       <button data-section="basics">Basics</button>
       <button data-section="threats">Threats</button>
-      <b
+      <button data-section="mental">Mental Survival</button>
+      <button data-section="tools">Tools</button>
+      <button data-section="store">Store</button>
+      <button data-section="about">About</button>
+    </nav>
+    <main id="content" tabindex="0" aria-live="polite" aria-atomic="true">
+      Welcome to You Didn’t Die.
+      Your survival bible awaits. Select a section to get started.
+    </main>
+  </div>
+
+  <script>
+    const CONTENT = {
+      start: `Welcome to You Didn't Die.\nYour survival bible awaits. Type or tap on sections to explore.`,
+      basics: `
+        <div class="accordion">
+          <button class="accordion-btn">Water</button>
+          <div class="accordion-content" style="max-height:0;overflow:hidden;transition:max-height 0.3s ease;">
+            <p>Always purify by boiling, filtering, or using purification tablets. Avoid stagnant sources. Learn to collect rain or dew when needed.</p>
+          </div>
+
+          <button class="accordion-btn">Fire</button>
+          <div class="accordion-content" style="max-height:0;overflow:hidden;transition:max-height 0.3s ease;">
+            <p>Fire provides heat, light, morale, and safety. Master ferro rods, lighters, and primitive methods like bow drills.</p>
+          </div>
+
+          <button class="accordion-btn">Shelter</button>
+          <div class="accordion-content" style="max-height:0;overflow:hidden;transition:max-height 0.3s ease;">
+            <p>Shelter protects against exposure. Learn how to make a debris hut, tarp lean-to, or snow cave depending on terrain and climate.</p>
+          </div>
+
+          <button class="accordion-btn">Food</button>
+          <div class="accordion-content" style="max-height:0;overflow:hidden;transition:max-height 0.3s ease;">
+            <p>Know local edible plants, how to snare small game, and basic fishing. Fat and protein are essential for long-term energy.</p>
+          </div>
+        </div>
+      `,
+      threats: `Threats:\n- Natural: Earthquakes, floods, storms.\n- Man-made: Nuclear, social collapse, crime.\n- Animals: Know what’s dangerous in your area.`,
+      mental: `Mental Survival:\nStay calm. Prioritize tasks. Keep hope alive.\nMental strength often saves lives.`,
+      tools: `Tools:\n- Knives, multi-tools, first aid kits.\n- Backup power: batteries, solar chargers.\n- Communication: radios, signal mirrors.`,
+      store: `Store:\nComing soon: curated survival gear, essentials, and more.`,
+      about: `About:\nThis guide was created by Nick.\nDark humor and brutal honesty to keep you sane and alive.`
+    };
+
+    const nav = document.querySelector('nav');
+    const buttons = nav.querySelectorAll('button');
+    const content = document.getElementById('content');
+    const bootScreen = document.getElementById('boot');
+    const bootBar = document.getElementById('boot-bar');
+
+    function setActive(button) {
+      buttons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+    }
+
+    function setupAccordion() {
+      const accordions = document.querySelectorAll('.accordion-btn');
+      accordions.forEach(btn => {
+        btn.addEventListener('click', () => {
+          btn.classList.toggle('active');
+          const panel = btn.nextElementSibling;
+          if (panel.style.maxHeight && panel.style.maxHeight !== "0px") {
+            panel.style.maxHeight = "0";
+          } else {
+            panel.style.maxHeight = panel.scrollHeight + "px";
+          }
+        });
+      });
+    }
+
+    nav.addEventListener('click', e => {
+      if (e.target.tagName === 'BUTTON') {
+        const section = e.target.getAttribute('data-section');
+        if (CONTENT[section]) {
+          content.innerHTML = CONTENT[section];
+          setActive(e.target);
+          if (section === "basics") setupAccordion();
+          content.focus();
+        }
+      }
+    });
+
+    // Boot bar animation
+    let width = 0;
+    const interval = setInterval(() => {
+      if (width >= 100) {
+        clearInterval(interval);
+        bootScreen.style.display = "none"; // Hide boot screen when done
+        content.innerHTML = CONTENT.start + "\n\nSelect a section to begin.";
+        // Focus content only after DOM update
+        setTimeout(() => content.focus(), 10);
+      } else {
+        width += 2;
+        bootBar.style.width = width + "%";
+      }
+    }, 50);
+  </script>
+</body>
+</html>
