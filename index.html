@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -11,9 +11,12 @@
       --glow: 0 0 8px var(--green);
       --font: 'Courier New', Courier, monospace;
     }
+    * {
+      box-sizing: border-box;
+    }
     body {
-      margin:0; 
-      height:100vh;
+      margin: 0;
+      height: 100vh;
       background: var(--dark);
       color: var(--green);
       font-family: var(--font);
@@ -21,6 +24,10 @@
       flex-direction: column;
       overflow: hidden;
       text-shadow: var(--glow);
+    }
+    a {
+      color: var(--green);
+      text-decoration: underline;
     }
     header {
       padding: 0.8rem 1rem;
@@ -30,6 +37,7 @@
       user-select: none;
       background: #00220d;
       box-shadow: inset 0 0 10px #004422;
+      z-index: 1;
     }
     #container {
       flex-grow: 1;
@@ -44,6 +52,7 @@
       display: flex;
       flex-direction: column;
       box-shadow: inset 0 0 12px #004422;
+      overflow-y: auto;
     }
     nav button {
       background: transparent;
@@ -68,77 +77,26 @@
     }
     main {
       flex-grow: 1;
-      padding: 1.5rem 2rem;
+      padding: 1rem 2rem;
       overflow-y: auto;
       background: #001a0d;
       box-shadow: inset 0 0 10px #004422;
       font-size: 1.1rem;
-      line-height: 1.4;
-      white-space: normal;
+      line-height: 1.5;
+      white-space: pre-wrap;
       max-height: calc(100vh - 52px);
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
     }
-    /* Submenu container inside main content */
-    #submenu {
-      margin-bottom: 1rem;
-      padding-left: 1rem;
-      border-left: 2px solid var(--green);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    #submenu a {
+    .subnav a {
+      display: block;
+      padding: 0.4rem 1rem;
+      font-size: 1rem;
       color: var(--green);
       text-decoration: none;
-      font-family: var(--font);
-      border: 1px solid var(--green);
-      padding: 0.2rem 0.5rem;
-      border-radius: 3px;
+      cursor: pointer;
       transition: background-color 0.2s ease;
-      cursor: pointer;
-      user-select: none;
     }
-    #submenu a:hover {
+    .subnav a:hover {
       background-color: #003322;
-      box-shadow: var(--glow);
-    }
-    /* Scrollbar hiding for nav */
-    nav {
-      scrollbar-width: none; /* Firefox */
-      -ms-overflow-style: none;  /* IE and Edge */
-    }
-    nav::-webkit-scrollbar {
-      display: none; /* Chrome, Safari, Opera */
-    }
-    /* Accordion styles */
-    .accordion-btn {
-      background: transparent;
-      border: 1px solid var(--green);
-      color: var(--green);
-      font-family: var(--font);
-      font-size: 1rem;
-      padding: 0.5rem 1rem;
-      width: 100%;
-      text-align: left;
-      cursor: pointer;
-      margin-bottom: 0.2rem;
-      user-select: none;
-      transition: background-color 0.25s ease;
-      border-radius: 4px;
-    }
-    .accordion-btn.active, .accordion-btn:hover {
-      background-color: #003322;
-      box-shadow: var(--glow);
-    }
-    .accordion-content {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-      padding-left: 1rem;
-      margin-bottom: 1rem;
-      user-select: text;
     }
     @media (max-width: 700px) {
       #container {
@@ -155,8 +113,6 @@
       }
       nav button {
         flex: 1 0 auto;
-        border-top: none;
-        border-bottom: none;
         border-left: 1px solid var(--green);
         border-right: 1px solid var(--green);
         padding: 0.8rem 1rem;
@@ -169,20 +125,51 @@
       main {
         padding: 1rem;
       }
-      #submenu {
-        border-left: none;
-        padding-left: 0;
-        justify-content: center;
-      }
+    }
+    #boot {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: black;
+      color: limegreen;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: monospace;
+      z-index: 9999;
+    }
+    #boot-bar-container {
+      width: 80%;
+      max-width: 600px;
+      height: 1.2rem;
+      border: 1px solid limegreen;
+      margin-top: 1rem;
+    }
+    #boot-bar {
+      height: 100%;
+      width: 0%;
+      background: limegreen;
+      transition: width 0.2s;
+    }
+    #boot-logs {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      width: 80%;
+      max-width: 600px;
+      text-align: left;
+      max-height: 200px;
+      overflow-y: auto;
     }
   </style>
 </head>
 <body>
-  <div id="boot" style="position:fixed;top:0;left:0;width:100%;height:100%;background:black;color:limegreen;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:monospace;z-index:9999;">
-    <div id="boot-text" style="font-size:1.2rem;">Booting survival OS...</div>
-    <div id="boot-bar-container" style="width:80%;max-width:600px;height:1.2rem;border:1px solid limegreen;margin-top:1rem;">
-      <div id="boot-bar" style="height:100%;width:0%;background:limegreen;"></div>
+  <div id="boot">
+    <div id="boot-text">Initializing Survival OS...</div>
+    <div id="boot-bar-container">
+      <div id="boot-bar"></div>
     </div>
+    <div id="boot-logs"></div>
   </div>
 
   <header>You Didn’t Die — Survival Guide</header>
@@ -197,63 +184,77 @@
       <button data-section="about">About</button>
     </nav>
     <main id="content" tabindex="0" aria-live="polite" aria-atomic="true">
-      <div id="submenu"></div>
-      <div id="main-text">
-        Welcome to You Didn’t Die.
-        Your survival bible awaits. Select a section to get started.
-      </div>
+      Welcome to You Didn’t Die. Your survival bible awaits. Select a section to get started.
     </main>
   </div>
 
   <script>
-    // Content structure with subpages and main pages
-    const DATA = {
-      start: {
-        content: `Welcome to You Didn't Die.\nYour survival bible awaits. Select a section to get started.`,
-        submenu: []
-      },
-      basics: {
-        content: `
-          <p>Basics are the bedrock of survival. Master these and you'll be one step closer to not dying.</p>
-          <p>Select a topic below to dive deep:</p>
-        `,
-        submenu: ['Water', 'Fire', 'Shelter', 'Food']
-      },
-      'basics/water': {
-        content: `
-          <h2>Water</h2>
-          <p>Water is life, dumbass. Always purify by boiling, filtering, or using purification tablets. Avoid stagnant sources. Learn to collect rain or dew when needed.</p>
-          <p>Check out <a href="#" data-link="tools/filters">Water Filters</a> in our store for quick solutions.</p>
-        `,
-        submenu: []
-      },
-      'basics/fire': {
-        content: `
-          <h2>Fire</h2>
-          <p>Fire provides heat, light, morale, and safety. Master ferro rods, lighters, and primitive methods like bow drills.</p>
-          <p>Grab a <a href="#" data-link="tools/ferro-rod">ferro rod</a> or a <a href="#" data-link="tools/lighters">lighter</a> from the store to get started.</p>
-        `,
-        submenu: []
-      },
-      'basics/shelter': {
-        content: `
-          <h2>Shelter</h2>
-          <p>Shelter protects against exposure. Learn how to make a debris hut, tarp lean-to, or snow cave depending on terrain and climate.</p>
-          <p>Check our <a href="#" data-link="tools/tarps">tarps</a> and <a href="#" data-link="tools/ropes">ropes</a> in the store.</p>
-        `,
-        submenu: []
-      },
-      'basics/food': {
-        content: `
-          <h2>Food</h2>
-          <p>Know local edible plants, how to snare small game, and basic fishing. Fat and protein are essential for long-term energy.</p>
-          <p>See <a href="#" data-link="tools/traps">traps</a> and <a href="#" data-link="tools/fishing-gear">fishing gear</a> in the store.</p>
-        `,
-        submenu: []
-      },
-      threats: {
-        content: `
-          <h2>Threats</h2>
-          <p>Here’s the lowdown on what might kill you:</p>
-          <ul>
-            <li><a href="#" data-link="threats/z
+    const content = document.getElementById("content");
+    const buttons = document.querySelectorAll("nav button");
+    const bootLogs = document.getElementById("boot-logs");
+    const bootBar = document.getElementById("boot-bar");
+
+    const SECTIONS = {
+      start: "Welcome, meatbag. You survived something horrible. Good for you. Now read this crap and try not to die again.\n\nPick a section.",
+      basics: `
+        <div class="subnav">
+          <a href="#" onclick="loadPage('basics_fire')">Fire</a>
+          <a href="#" onclick="loadPage('basics_water')">Water</a>
+          <a href="#" onclick="loadPage('basics_shelter')">Shelter</a>
+          <a href="#" onclick="loadPage('basics_food')">Food</a>
+        </div>`,
+      basics_fire: `Fire: Your first warm hug post-apocalypse. Needed for warmth, cooking, signaling, and scaring off things with more teeth than IQ.\n\nLearn ferro rods, matches, lighters, and your own pathetic breath.`,
+      basics_water: `Water: You're 70% water. Without it, you're 100% corpse. Boil, filter, or chemically nuke that H2O before slurping.\n\nCollect rain, morning dew, or cry yourself a puddle.`,
+      basics_shelter: `Shelter: Keeps you from becoming a meat popsicle. From tarp tents to luxury leaf condos — learn your options.\n\nTime = warmth = survival.`,
+      basics_food: `Food: Starvation makes you dumb. Dumber than usual. Forage, trap, fish, and always question free buffet signs in the wasteland.`,
+      threats: `THREATS:\n\nNatural: Earthquakes, storms, being too close to Florida.\nMan-made: War, nukes, crypto bros.\nZombies? Sure, why not. If it's breathing or exploding, assume it wants you dead.\n\nNeed fire? [Click here](#basics_fire)`,
+      mental: `Mental Survival:\n\nYou’re not just fighting nature. You’re fighting your own dumb brain.\nStay calm. Make priorities. If you start talking to a volleyball, maybe cut back on the shrooms.`,
+      tools: `TOOLS:\n\nIf it can cut, stab, cook, or signal — pack it.\n\nKnife, rope, lighter, compass, first aid, solar charger, backup battery, and snacks. Especially snacks.`,
+      store: `STORE:\n\nComing soon: overpriced essentials and ironic merch.\n\nNeed rope? <a href="#">Buy now</a> (someday).`,
+      about: `This monstrosity was built by Nick. If it made you laugh or saved your ass — you're welcome.\n\nIf not... well, you're still not dead.`
+    };
+
+    function loadPage(key) {
+      content.innerHTML = SECTIONS[key] || "404: Page not found. You've already died inside.";
+    }
+
+    document.querySelector("nav").addEventListener("click", e => {
+      if (e.target.tagName === "BUTTON") {
+        buttons.forEach(b => b.classList.remove("active"));
+        e.target.classList.add("active");
+        loadPage(e.target.getAttribute("data-section"));
+      }
+    });
+
+    // Boot Animation
+    const bootLines = [
+      "Loading sarcasm.dll...",
+      "Injecting existential dread...",
+      "Patching common sense... failed.",
+      "Calibrating BS filter...",
+      "Warming up snark engines...",
+      "Enabling survival mode: BASIC BITCH",
+      "Firing up caffeine core...",
+      "Disabling empathy.exe...",
+      "Initializing user disappointment...",
+      "Done. Barely."
+    ];
+    let logIndex = 0, progress = 0;
+    const bootInterval = setInterval(() => {
+      if (progress >= 100) {
+        clearInterval(bootInterval);
+        document.getElementById("boot").style.display = "none";
+        loadPage("start");
+      } else {
+        progress += 10;
+        bootBar.style.width = progress + "%";
+        if (bootLines[logIndex]) {
+          const p = document.createElement("div");
+          p.textContent = bootLines[logIndex++];
+          bootLogs.appendChild(p);
+        }
+      }
+    }, 400);
+  </script>
+</body>
+</html>
