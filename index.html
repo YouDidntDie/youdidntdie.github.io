@@ -11,9 +11,6 @@
       --glow: 0 0 8px var(--green);
       --font: 'Courier New', Courier, monospace;
     }
-    * {
-      box-sizing: border-box;
-    }
     body {
       margin: 0;
       height: 100vh;
@@ -25,19 +22,14 @@
       overflow: hidden;
       text-shadow: var(--glow);
     }
-    a {
-      color: var(--green);
-      text-decoration: underline;
-    }
     header {
       padding: 0.8rem 1rem;
       border-bottom: 2px solid var(--green);
       font-size: 1.5rem;
       text-align: center;
-      user-select: none;
       background: #00220d;
       box-shadow: inset 0 0 10px #004422;
-      z-index: 1;
+      z-index: 10;
     }
     #container {
       flex-grow: 1;
@@ -52,7 +44,7 @@
       display: flex;
       flex-direction: column;
       box-shadow: inset 0 0 12px #004422;
-      overflow-y: auto;
+      z-index: 5;
     }
     nav button {
       background: transparent;
@@ -66,7 +58,6 @@
       cursor: pointer;
       text-align: left;
       transition: background-color 0.25s ease;
-      user-select: none;
     }
     nav button:first-child {
       border-top: none;
@@ -75,29 +66,65 @@
       background-color: #003322;
       box-shadow: var(--glow);
     }
+    .subnav a {
+      color: var(--green);
+      padding: 0.4rem 1.5rem;
+      font-size: 0.95rem;
+      display: block;
+      text-decoration: none;
+    }
+    .subnav a:hover {
+      background-color: #002a1a;
+    }
     main {
       flex-grow: 1;
-      padding: 1rem 2rem;
       overflow-y: auto;
       background: #001a0d;
       box-shadow: inset 0 0 10px #004422;
       font-size: 1.1rem;
-      line-height: 1.5;
-      white-space: pre-wrap;
-      max-height: calc(100vh - 52px);
+      line-height: 1.4;
+      padding: 1rem 2rem;
+      position: relative;
     }
-    .subnav a {
-      display: block;
-      padding: 0.4rem 1rem;
-      font-size: 1rem;
-      color: var(--green);
-      text-decoration: none;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
+
+    /* Boot screen styling */
+    #boot {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      color: limegreen;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: monospace;
+      z-index: 9999;
+      text-shadow: 0 0 5px limegreen;
     }
-    .subnav a:hover {
-      background-color: #003322;
+    #boot-bar-container {
+      width: 80%;
+      max-width: 600px;
+      height: 1.2rem;
+      border: 1px solid limegreen;
+      margin-top: 1rem;
     }
+    #boot-bar {
+      height: 100%;
+      width: 0%;
+      background: limegreen;
+      transition: width 0.05s linear;
+    }
+    #boot-lines {
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      width: 80%;
+      max-width: 600px;
+      text-align: left;
+    }
+
     @media (max-width: 700px) {
       #container {
         flex-direction: column;
@@ -126,57 +153,28 @@
         padding: 1rem;
       }
     }
-    #boot {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: black;
-      color: limegreen;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: monospace;
-      z-index: 9999;
-    }
-    #boot-bar-container {
-      width: 80%;
-      max-width: 600px;
-      height: 1.2rem;
-      border: 1px solid limegreen;
-      margin-top: 1rem;
-    }
-    #boot-bar {
-      height: 100%;
-      width: 0%;
-      background: limegreen;
-      transition: width 0.2s;
-    }
-    #boot-logs {
-      margin-top: 1rem;
-      font-size: 0.9rem;
-      width: 80%;
-      max-width: 600px;
-      text-align: left;
-      max-height: 200px;
-      overflow-y: auto;
-    }
   </style>
 </head>
 <body>
   <div id="boot">
-    <div id="boot-text">Initializing Survival OS...</div>
+    <div id="boot-text">Booting survival OS...</div>
     <div id="boot-bar-container">
       <div id="boot-bar"></div>
     </div>
-    <div id="boot-logs"></div>
+    <div id="boot-lines"></div>
   </div>
 
   <header>You Didn’t Die — Survival Guide</header>
   <div id="container">
-    <nav aria-label="Section navigation">
+    <nav aria-label="Main navigation">
       <button data-section="start" class="active">Start Here</button>
       <button data-section="basics">Basics</button>
+      <div class="subnav" id="basics-sub" style="display:none;">
+        <a href="#" data-sub="water">Water</a>
+        <a href="#" data-sub="fire">Fire</a>
+        <a href="#" data-sub="shelter">Shelter</a>
+        <a href="#" data-sub="food">Food</a>
+      </div>
       <button data-section="threats">Threats</button>
       <button data-section="mental">Mental Survival</button>
       <button data-section="tools">Tools</button>
@@ -189,72 +187,94 @@
   </div>
 
   <script>
-    const content = document.getElementById("content");
-    const buttons = document.querySelectorAll("nav button");
-    const bootLogs = document.getElementById("boot-logs");
-    const bootBar = document.getElementById("boot-bar");
-
-    const SECTIONS = {
-      start: "Welcome, meatbag. You survived something horrible. Good for you. Now read this crap and try not to die again.\n\nPick a section.",
-      basics: `
-        <div class="subnav">
-          <a href="#" onclick="loadPage('basics_fire')">Fire</a>
-          <a href="#" onclick="loadPage('basics_water')">Water</a>
-          <a href="#" onclick="loadPage('basics_shelter')">Shelter</a>
-          <a href="#" onclick="loadPage('basics_food')">Food</a>
-        </div>`,
-      basics_fire: `Fire: Your first warm hug post-apocalypse. Needed for warmth, cooking, signaling, and scaring off things with more teeth than IQ.\n\nLearn ferro rods, matches, lighters, and your own pathetic breath.`,
-      basics_water: `Water: You're 70% water. Without it, you're 100% corpse. Boil, filter, or chemically nuke that H2O before slurping.\n\nCollect rain, morning dew, or cry yourself a puddle.`,
-      basics_shelter: `Shelter: Keeps you from becoming a meat popsicle. From tarp tents to luxury leaf condos — learn your options.\n\nTime = warmth = survival.`,
-      basics_food: `Food: Starvation makes you dumb. Dumber than usual. Forage, trap, fish, and always question free buffet signs in the wasteland.`,
-      threats: `THREATS:\n\nNatural: Earthquakes, storms, being too close to Florida.\nMan-made: War, nukes, crypto bros.\nZombies? Sure, why not. If it's breathing or exploding, assume it wants you dead.\n\nNeed fire? [Click here](#basics_fire)`,
-      mental: `Mental Survival:\n\nYou’re not just fighting nature. You’re fighting your own dumb brain.\nStay calm. Make priorities. If you start talking to a volleyball, maybe cut back on the shrooms.`,
-      tools: `TOOLS:\n\nIf it can cut, stab, cook, or signal — pack it.\n\nKnife, rope, lighter, compass, first aid, solar charger, backup battery, and snacks. Especially snacks.`,
-      store: `STORE:\n\nComing soon: overpriced essentials and ironic merch.\n\nNeed rope? <a href="#">Buy now</a> (someday).`,
-      about: `This monstrosity was built by Nick. If it made you laugh or saved your ass — you're welcome.\n\nIf not... well, you're still not dead.`
+    const CONTENT = {
+      start: `Welcome to the Survival OS.\nIf you're seeing this, congrats — you're still breathing.\nNow pick a section and try not to screw it up.`,
+      basics: `You're in the Basics. Choose one of the essentials:`,
+      water: `Water:\nYou're mostly made of it. Keep it clean or die trying.\n- Purify by boiling, filtering, or tabs.\n- Avoid anything that smells like a corpse.\n- Rain is good. Puddles are suspicious.`,
+      fire: `Fire:\nBecause hypothermia is a bitch.\n- Use lighters, ferro rods, or rub sticks like a caveman.\n- Keep it dry. Keep it safe. Worship it.`,
+      shelter: `Shelter:\nMother Nature will murder you without one.\n- Debris huts, lean-tos, snow caves — learn 'em.\n- Pick location wisely unless you want ants in your eyes.`,
+      food: `Food:\nYou'll get hangry. Then you'll get dead.\n- Snare small game. Fish. Forage.\n- Fat = life. Eat smart.`,
+      threats: `Threats:\nEverything's trying to kill you. Here's a shortlist:\n- Nature: floods, storms, earthquakes.\n- People: looters, raiders, that guy named Jeff.\n- Animals: Learn which ones see you as a snack.`,
+      mental: `Mental Survival:\nYour brain will betray you first.\n- Stay focused. Set goals. Laugh at the absurdity.\n- Sanity is optional, survival isn't.`,
+      tools: `Tools:\nYou brought them, right?\n- Knife, duct tape, multitool.\n- First aid. Backup power.\n- Radios, signal mirrors, and the ability to not be an idiot.`,
+      store: `Store:\nComing soon: gear, gadgets, and probably overpriced knives.\nYou’ll want them. Your life may depend on it.`,
+      about: `About:\nBuilt by Nick. Fueled by caffeine and despair.\nThis guide is brutal, sarcastic, and probably more honest than your ex.`
     };
 
-    function loadPage(key) {
-      content.innerHTML = SECTIONS[key] || "404: Page not found. You've already died inside.";
+    const initLines = [
+      "Initializing sass core...",
+      "Compiling survival algorithms from YouTube and trauma...",
+      "Locating your last brain cell...",
+      "Loading nihilism.dll...",
+      "Injecting dark humor into terminal...",
+      "Decrypting encrypted stupidity...",
+      "Rewiring common sense (failed)...",
+      "Loading: sharp rocks and poor decisions...",
+      "Installing sarcasm module...",
+      "Wiping empathy... done.",
+      "Checking for hope... not found.",
+      "Generating illusion of control...",
+      "Synching with your disappointment...",
+      "Rebuilding ego... 404 ego not found."
+    ];
+
+    const nav = document.querySelector("nav");
+    const buttons = nav.querySelectorAll("button");
+    const content = document.getElementById("content");
+    const subnav = document.getElementById("basics-sub");
+
+    function setActive(button) {
+      buttons.forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
     }
 
-    document.querySelector("nav").addEventListener("click", e => {
-      if (e.target.tagName === "BUTTON") {
-        buttons.forEach(b => b.classList.remove("active"));
-        e.target.classList.add("active");
-        loadPage(e.target.getAttribute("data-section"));
+    nav.addEventListener("click", e => {
+      const target = e.target;
+      if (target.tagName === "BUTTON") {
+        const section = target.getAttribute("data-section");
+        if (CONTENT[section]) {
+          content.innerText = CONTENT[section];
+          setActive(target);
+          subnav.style.display = section === "basics" ? "block" : "none";
+        }
       }
     });
 
-    // Boot Animation
-    const bootLines = [
-      "Loading sarcasm.dll...",
-      "Injecting existential dread...",
-      "Patching common sense... failed.",
-      "Calibrating BS filter...",
-      "Warming up snark engines...",
-      "Enabling survival mode: BASIC BITCH",
-      "Firing up caffeine core...",
-      "Disabling empathy.exe...",
-      "Initializing user disappointment...",
-      "Done. Barely."
-    ];
-    let logIndex = 0, progress = 0;
-    const bootInterval = setInterval(() => {
-      if (progress >= 100) {
-        clearInterval(bootInterval);
-        document.getElementById("boot").style.display = "none";
-        loadPage("start");
-      } else {
-        progress += 10;
-        bootBar.style.width = progress + "%";
-        if (bootLines[logIndex]) {
-          const p = document.createElement("div");
-          p.textContent = bootLines[logIndex++];
-          bootLogs.appendChild(p);
+    subnav.addEventListener("click", e => {
+      if (e.target.tagName === "A") {
+        e.preventDefault();
+        const sub = e.target.getAttribute("data-sub");
+        if (CONTENT[sub]) {
+          content.innerText = CONTENT[sub];
         }
       }
-    }, 400);
+    });
+
+    // Boot sequence with stacked lines
+    const boot = document.getElementById("boot");
+    const bootBar = document.getElementById("boot-bar");
+    const bootLines = document.getElementById("boot-lines");
+
+    let width = 0;
+    let lineIndex = 0;
+
+    const bootInterval = setInterval(() => {
+      if (width >= 100) {
+        clearInterval(bootInterval);
+        setTimeout(() => {
+          boot.style.display = "none";
+        }, 500);
+      } else {
+        width += 4;
+        bootBar.style.width = width + "%";
+
+        if (lineIndex < initLines.length) {
+          const line = document.createElement("div");
+          line.textContent = initLines[lineIndex++];
+          bootLines.appendChild(line);
+        }
+      }
+    }, 100);
   </script>
 </body>
 </html>
