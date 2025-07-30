@@ -1,159 +1,170 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>You Didn’t Die — Survival Guide</title>
   <style>
     :root {
       --green: #00ff00;
-      --dark: #000;
+      --dark: #000000;
       --glow: 0 0 8px var(--green);
-      --font: 'Courier New', Courier, monospace;
+      --font: 'Courier New', monospace;
     }
+
     body {
-      margin:0; 
-      height:100vh;
+      margin: 0;
+      height: 100vh;
       background: var(--dark);
       color: var(--green);
       font-family: var(--font);
       display: flex;
       flex-direction: column;
-      overflow: hidden;
-      text-shadow: var(--glow);
     }
+
     header {
-      padding: 0.8rem 1rem;
+      padding: 1rem;
       border-bottom: 2px solid var(--green);
-      font-size: 1.5rem;
       text-align: center;
       user-select: none;
-      background: #000;
+      background: #001a0d;
+      font-size: 1.4rem;
       box-shadow: inset 0 0 10px #004422;
     }
+
     #container {
-      flex-grow: 1;
+      flex: 1;
       display: flex;
-      height: calc(100vh - 52px);
       overflow: hidden;
     }
+
     nav {
-      width: 220px; 
-      background: #000;
+      width: 200px;
+      background: #001a0d;
       border-right: 2px solid var(--green);
+      box-shadow: inset 0 0 10px #004422;
       display: flex;
       flex-direction: column;
-      box-shadow: inset 0 0 12px #004422;
     }
+
     nav button {
-      background: transparent;
+      width: 100%;
+      padding: 1rem;
       border: none;
-      border-top: 1px solid var(--green);
-      border-bottom: 1px solid var(--green);
-      padding: 1rem 1.5rem;
+      background: none;
       color: var(--green);
-      font-family: var(--font);
-      font-size: 1.1rem;
       cursor: pointer;
       text-align: left;
-      transition: background-color 0.25s ease;
-      user-select: none;
+      font-size: 1rem;
+      border-top: 1px solid var(--green);
+      font-family: var(--font);
+      transition: background 0.3s;
     }
+
     nav button:first-child {
       border-top: none;
     }
-    nav button:hover, nav button.active {
+
+    nav button.active,
+    nav button:hover {
       background-color: #003322;
-      box-shadow: var(--glow);
+      text-shadow: var(--glow);
     }
-    .accordion button.accordion-btn {
-   width: 100%;
-   background: none;
-   border: none;
-   border-top: 1px solid var(--green);
-   color: var(--green);
-   text-align: left;
-   padding: 2.8rem;
-   font-size: 1.1rem;
-   font-family: var(--font);
-   cursor: pointer;
-   outline: none;
-   text-shadow: var(--glow);
-   transition: background 0.2s;
- }
-  .accordion button.accordion-btn:hover {
-    background-color: #002f1e;
-  }
-  .accordion-content {
-    max-height: 500;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-    padding: 8rem;
-    font-size: 1rem;
-    line-height: 1.4;
-    background-color: #001a0d;
-  }
-  .accordion-btn.active + .accordion-content {
-  max-height: 500px; /* or whatever's safe for your layout */
-}
-  
 
     main {
-      flex-grow: 1;
+      flex: 1;
       padding: 2rem;
-      overflow-y: auto;
-      background: #none;
-      box-shadow: inset 0 0 10px #004422;
+      overflow: auto;
+      background: #001a0d;
       font-size: 1.1rem;
-      line-height: 1.4;
-      white-space: pre-wrap;
-      scroll-padding-top: 2.5rem;
+      line-height: 1.5;
     }
+
+    /* Sidebar Encyclopedia */
+    #sidebar {
+      position: fixed;
+      top: 52px;
+      right: -320px;
+      width: 320px;
+      bottom: 0;
+      background: #00220d;
+      border-left: 2px solid var(--green);
+      transition: right 0.4s ease;
+      overflow-y: auto;
+      padding: 1rem;
+      box-shadow: inset 0 0 12px #004422;
+      z-index: 999;
+    }
+
+    #sidebar.open {
+      right: 0;
+    }
+
+    .chapter {
+      margin-bottom: 2rem;
+    }
+
+    .chapter-title {
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      border: 1px solid var(--green);
+      margin-bottom: 0.5rem;
+      background-color: #001a0d;
+    }
+
+    .chapter-title:hover {
+      background-color: #003322;
+    }
+
+    .chapter-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+      padding-left: 1rem;
+    }
+
+    .chapter-content.open {
+      max-height: 400px;
+    }
+
+    @keyframes flicker {
+      0% {opacity:1;} 10% {opacity:0.97;} 20% {opacity:1;} 
+      30% {opacity:0.95;} 40% {opacity:1;} 100% {opacity:1;}
+    }
+
+    .fade-in {
+      animation: flicker 0.2s 1;
+    }
+
+    /* Scrollbar hiding */
+    #sidebar::-webkit-scrollbar { display: none; }
+    #sidebar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Responsive tweaks */
     @media (max-width: 700px) {
-      #container {
-        flex-direction: column;
-        height: auto;
-      }
       nav {
-        width: 100%;
-        height: auto;
-        border-right: none;
-        border-bottom: 2px solid var(--green);
         flex-direction: row;
         overflow-x: auto;
+        width: 100%;
+        border-right: none;
+        border-bottom: 2px solid var(--green);
       }
       nav button {
         flex: 1 0 auto;
+        text-align: center;
+        border-left: 1px solid var(--green);
         border-top: none;
         border-bottom: none;
-        border-left: 1px solid var(--green);
-        border-right: 1px solid var(--green);
-        padding: 0.8rem 1rem;
-        font-size: 1rem;
-        text-align: center;
-      }
-      nav button:first-child {
-        border-left: none;
-      }
-      main {
-        padding: 1rem;
       }
     }
   </style>
 </head>
 <body>
-   <div id="boot" style="position:fixed;top:0;left:0;width:100%;height:100%;background:black;color:limegreen;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:monospace;z-index:9999;">
-   <div id="boot-text" style="font-size:1.2rem;">Booting survival OS...</div>
-   <div id="boot-bar-container" style="width:80%;max-width:600px;height:1.2rem;border:1px solid limegreen;margin-top:1rem;">
-     <div id="boot-progress" style="height:100%;width:0%;background:limegreen;"></div>
-   </div>
- </div>
-
-
   <header>You Didn’t Die — Survival Guide</header>
+
   <div id="container">
-    <nav aria-label="Section navigation">
-      <button data-section="start" class="active">Start Here</button>
+    <nav>
+      <button data-section="start" class="active">Start</button>
       <button data-section="basics">Basics</button>
       <button data-section="threats">Threats</button>
       <button data-section="mental">Mental Survival</button>
@@ -161,103 +172,82 @@
       <button data-section="store">Store</button>
       <button data-section="about">About</button>
     </nav>
-    <main id="content" tabindex="0" aria-live="polite" aria-atomic="true">
-      Welcome to You Didn’t Die.
-      stay alive, stay sane, and make it to the next day without getting eaten    </main>
+    <main id="content">
+      Welcome. Select a section to get snarked at by an artificial intelligence that’s been through more end-times than your childhood trauma.
+    </main>
   </div>
 
-   <script>
+  <div id="sidebar"></div>
+
+  <script>
     const CONTENT = {
-      start: `Booting Survival OS...`,
-      basics: `
-        <div class="accordion">
-          <button class="accordion-btn">Water</button>
-          <div class="accordion-content">
-            <p>Always purify by boiling, filtering, or using purification tablets. Avoid stagnant sources. Learn to collect rain or dew when needed.</p>
-          </div>
-
-          <button class="accordion-btn">Fire</button>
-          <div class="accordion-content">
-            <p>Fire provides heat, light, morale, and safety. Master ferro rods, lighters, and primitive methods like bow drills.</p>
-          </div>
-
-          <button class="accordion-btn">Shelter</button>
-          <div class="accordion-content">
-            <p>Shelter protects against exposure. Learn how to make a debris hut, tarp lean-to, or snow cave depending on terrain and climate.</p>
-          </div>
-
-          <button class="accordion-btn">Food</button>
-          <div class="accordion-content">
-            <p>Know local edible plants, how to snare small game, and basic fishing. Fat and protein are essential for long-term energy.</p>
-          </div>
-        </div>
-      `,
-      threats: `Threats:\n- Natural: Earthquakes, floods, storms.\n- Man-made: Nuclear, social collapse, crime.\n- Animals: Know what’s dangerous in your area.`,
-      mental: `Mental Survival:\nStay calm. Prioritize tasks. Keep hope alive.\nMental strength often saves lives.`,
-      tools: `Tools:\n- Knives, multi-tools, first aid kits.\n- Backup power: batteries, solar chargers.\n- Communication: radios, signal mirrors.`,
-      store: `Store:\nComing soon: curated survival gear, essentials, and more.`,
-      about: `About:\nThis guide was created by Nick.\nDark humor and brutal honesty to keep you sane and alive.`
+      start: "Welcome, meatbag. Select a topic and maybe—just maybe—you’ll survive the weekend.",
+      basics: {
+        chapters: [
+          { title: "Water", text: "Always purify your water. Boil, filter, or use tablets. Unless you're into diarrhea cosplay." },
+          { title: "Fire", text: "Fire is warm. Fire is light. Fire is your best friend until it eats your shelter." },
+          { title: "Shelter", text: "Find cover. Build something. A trash bag is better than frostbite. I don’t make the rules." },
+          { title: "Food", text: "Forage, hunt, or get eaten. Either way, it’s a buffet." }
+        ]
+      },
+      threats: "Threats:\nNatural: Earthquakes, floods, storms.\nMan-made: Nuclear fallout, TikTok challenges, idiots with guns.",
+      mental: "Mental Survival:\nStay calm. Or don’t. Either way, panic is inefficient.\nTalk to yourself—just not too loudly.",
+      tools: "Tools:\nKnives, duct tape, first-aid kits. If you forgot these, you’re already halfway to dead.",
+      store: "Store:\nComing soon: overpriced gadgets you didn’t know you needed until everything went sideways.",
+      about: "About:\nBuilt by Nick.\nMaintained by a rogue AI trained on sarcasm and survival guides.\nAll snark, no sugar."
     };
 
-    const nav = document.querySelector('nav');
-    const buttons = nav.querySelectorAll('button');
-    const content = document.getElementById('content');
+    const nav = document.querySelector("nav");
+    const content = document.getElementById("content");
+    const sidebar = document.getElementById("sidebar");
 
-    function setActive(button) {
-      buttons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
+    function setActive(btn) {
+      nav.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
     }
 
-    function setupAccordion() {
-      const accordions = document.querySelectorAll('.accordion-btn');
-      accordions.forEach(btn => {
-        btn.addEventListener('click', () => {
-          btn.classList.toggle('active');
-          const panel = btn.nextElementSibling;
-          if (panel.style.maxHeight) {
-            panel.style.maxHeight = null;
-          } else {
-            panel.style.maxHeight = panel.scrollHeight + "px";
-          }
+    function loadBasics() {
+      sidebar.innerHTML = CONTENT.basics.chapters.map((ch, i) =>
+        `<div class="chapter">
+           <div class="chapter-title" data-index="${i}">${ch.title}</div>
+           <div class="chapter-content">${ch.text}</div>
+         </div>`
+      ).join("");
+
+      document.querySelectorAll(".chapter-title").forEach(t => {
+        t.addEventListener("click", () => {
+          const content = t.nextElementSibling;
+          content.classList.toggle("open");
+          content.classList.add("fade-in");
+          setTimeout(() => content.classList.remove("fade-in"), 300);
         });
       });
-    }
-    function setupAccordion() {
-  const accordions = document.querySelectorAll('.accordion-btn');
-  accordions.forEach(btn => {
-    btn.addEventListener('click', () => {
-      btn.classList.toggle('active');
-    });
-  });
-}
 
-    nav.addEventListener('click', e => {
-      if (e.target.tagName === 'BUTTON') {
-        const section = e.target.getAttribute('data-section');
-        if (CONTENT[section]) {
-          content.innerHTML = CONTENT[section];
-          setActive(e.target);
-          if (section === "basics") setupAccordion();
-          content.focus();
+      sidebar.classList.add("open");
+    }
+
+    nav.addEventListener("click", e => {
+      if (e.target.tagName === "BUTTON") {
+        const section = e.target.getAttribute("data-section");
+        setActive(e.target);
+        content.textContent = "Loading " + section + "...";
+        sidebar.classList.remove("open");
+
+        if (section === "basics") {
+          setTimeout(() => {
+            content.textContent = "Basics Encyclopedia Loaded. Check the sidebar.";
+            loadBasics();
+          }, 200);
+        } else {
+          content.textContent = CONTENT[section] || "This section is under radioactive construction.";
         }
       }
     });
 
-    // Boot bar animation
-const progressBar = document.getElementById("boot-progress");
-let width = 0;
-const interval = setInterval(() => {
-  if (width >= 100) {
-    clearInterval(interval);
-    document.getElementById("boot").style.display = "none"; // THIS LINE
-    content.innerHTML = CONTENT.start + "\n\nSelect a section to begin.";
-  } else {
-    width += 2;
-    progressBar.style.width = width + "%";
-  }
-}, 50);
+    // Load Basics by default for demo
+    setTimeout(() => {
+      nav.querySelector('[data-section="basics"]').click();
+    }, 200);
   </script>
-
-
 </body>
 </html>
