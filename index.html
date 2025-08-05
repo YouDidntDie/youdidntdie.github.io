@@ -11,6 +11,9 @@
       --glow: 0 0 8px var(--green);
       --font: 'Courier New', Courier, monospace;
     }
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
       height: 100vh;
@@ -29,13 +32,14 @@
       text-align: center;
       background: #00220d;
       box-shadow: inset 0 0 10px #004422;
-      z-index: 10;
+      z-index: 2;
     }
     #container {
       flex-grow: 1;
       display: flex;
-      height: calc(100vh - 52px);
       overflow: hidden;
+      position: relative;
+      height: calc(100vh - 52px);
     }
     nav {
       width: 220px;
@@ -44,7 +48,8 @@
       display: flex;
       flex-direction: column;
       box-shadow: inset 0 0 12px #004422;
-      z-index: 5;
+      overflow-y: auto;
+      z-index: 1;
     }
     nav button {
       background: transparent;
@@ -66,28 +71,31 @@
       background-color: #003322;
       box-shadow: var(--glow);
     }
-    .subnav a {
-      color: var(--green);
-      padding: 0.4rem 1.5rem;
+    nav .sub-link {
+      padding-left: 2.5rem;
       font-size: 0.95rem;
-      display: block;
-      text-decoration: none;
-    }
-    .subnav a:hover {
-      background-color: #002a1a;
+      color: var(--green);
+      background: none;
+      border: none;
+      text-align: left;
+      cursor: pointer;
     }
     main {
       flex-grow: 1;
+      padding: 2rem;
       overflow-y: auto;
       background: #001a0d;
       box-shadow: inset 0 0 10px #004422;
       font-size: 1.1rem;
-      line-height: 1.4;
-      padding: 1rem 2rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
       position: relative;
     }
-
-    /* Boot screen styling */
+    a {
+      color: var(--green);
+      text-decoration: underline;
+      cursor: pointer;
+    }
     #boot {
       position: fixed;
       top: 0;
@@ -102,7 +110,7 @@
       justify-content: center;
       font-family: monospace;
       z-index: 9999;
-      text-shadow: 0 0 5px limegreen;
+      font-size: 1rem;
     }
     #boot-bar-container {
       width: 80%;
@@ -110,21 +118,20 @@
       height: 1.2rem;
       border: 1px solid limegreen;
       margin-top: 1rem;
+      position: relative;
     }
     #boot-bar {
       height: 100%;
       width: 0%;
       background: limegreen;
-      transition: width 0.05s linear;
     }
     #boot-lines {
       margin-top: 1rem;
-      font-size: 0.75rem;
-      width: 80%;
+      width: 100%;
       max-width: 600px;
-      text-align: left;
+      font-size: 0.75rem;
+      line-height: 1.2;
     }
-
     @media (max-width: 700px) {
       #container {
         flex-direction: column;
@@ -140,10 +147,12 @@
       }
       nav button {
         flex: 1 0 auto;
-        border-left: 1px solid var(--green);
-        border-right: 1px solid var(--green);
         padding: 0.8rem 1rem;
         font-size: 1rem;
+        border-top: none;
+        border-bottom: none;
+        border-left: 1px solid var(--green);
+        border-right: 1px solid var(--green);
         text-align: center;
       }
       nav button:first-child {
@@ -157,7 +166,7 @@
 </head>
 <body>
   <div id="boot">
-    <div id="boot-text">Booting survival OS...</div>
+    <div id="boot-text">Booting Survival OS...</div>
     <div id="boot-bar-container">
       <div id="boot-bar"></div>
     </div>
@@ -165,114 +174,140 @@
   </div>
 
   <header>You Didn’t Die — Survival Guide</header>
+
   <div id="container">
-    <nav aria-label="Main navigation">
+    <nav>
       <button data-section="start" class="active">Start Here</button>
       <button data-section="basics">Basics</button>
-      <div class="subnav" id="basics-sub" style="display:none;">
-        <a href="#" data-sub="water">Water</a>
-        <a href="#" data-sub="fire">Fire</a>
-        <a href="#" data-sub="shelter">Shelter</a>
-        <a href="#" data-sub="food">Food</a>
-      </div>
+      <button class="sub-link" data-section="basics-water">↳ Water</button>
+      <button class="sub-link" data-section="basics-fire">↳ Fire</button>
+      <button class="sub-link" data-section="basics-shelter">↳ Shelter</button>
+      <button class="sub-link" data-section="basics-food">↳ Food</button>
+
       <button data-section="threats">Threats</button>
       <button data-section="mental">Mental Survival</button>
       <button data-section="tools">Tools</button>
       <button data-section="store">Store</button>
       <button data-section="about">About</button>
     </nav>
-    <main id="content" tabindex="0" aria-live="polite" aria-atomic="true">
-      Welcome to You Didn’t Die. Your survival bible awaits. Select a section to get started.
+
+    <main id="content" tabindex="0" aria-live="polite">
+      Welcome to <b>You Didn’t Die</b>.  
+      Your survival bible awaits.  
+      Select a section to get started.
     </main>
   </div>
 
+  <audio id="click-sound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
+
   <script>
     const CONTENT = {
-      start: `Welcome to the Survival OS.\nIf you're seeing this, congrats — you're still breathing.\nNow pick a section and try not to screw it up.`,
-      basics: `You're in the Basics. Choose one of the essentials:`,
-      water: `Water:\nYou're mostly made of it. Keep it clean or die trying.\n- Purify by boiling, filtering, or tabs.\n- Avoid anything that smells like a corpse.\n- Rain is good. Puddles are suspicious.`,
-      fire: `Fire:\nBecause hypothermia is a bitch.\n- Use lighters, ferro rods, or rub sticks like a caveman.\n- Keep it dry. Keep it safe. Worship it.`,
-      shelter: `Shelter:\nMother Nature will murder you without one.\n- Debris huts, lean-tos, snow caves — learn 'em.\n- Pick location wisely unless you want ants in your eyes.`,
-      food: `Food:\nYou'll get hangry. Then you'll get dead.\n- Snare small game. Fish. Forage.\n- Fat = life. Eat smart.`,
-      threats: `Threats:\nEverything's trying to kill you. Here's a shortlist:\n- Nature: floods, storms, earthquakes.\n- People: looters, raiders, that guy named Jeff.\n- Animals: Learn which ones see you as a snack.`,
-      mental: `Mental Survival:\nYour brain will betray you first.\n- Stay focused. Set goals. Laugh at the absurdity.\n- Sanity is optional, survival isn't.`,
-      tools: `Tools:\nYou brought them, right?\n- Knife, duct tape, multitool.\n- First aid. Backup power.\n- Radios, signal mirrors, and the ability to not be an idiot.`,
-      store: `Store:\nComing soon: gear, gadgets, and probably overpriced knives.\nYou’ll want them. Your life may depend on it.`,
-      about: `About:\nBuilt by Nick. Fueled by caffeine and despair.\nThis guide is brutal, sarcastic, and probably more honest than your ex.`
+      start: `Welcome to You Didn’t Die.\nYour survival bible awaits. Select a section to get started.`,
+
+      basics: `Basics:\nChoose a topic:\n- [Water](#basics-water)\n- [Fire](#basics-fire)\n- [Shelter](#basics-shelter)\n- [Food](#basics-food)`,
+
+      'basics-water': `WATER\n\nYou can last three weeks without food, but only three days without water. Unless you’re a cactus.\n\nCollect rainwater, use solar stills, or boil water. Filter out the parasites unless you like your intestines doing backflips.`,
+
+      'basics-fire': `FIRE\n\nWarmth, light, cooked food, and monster deterrent. Fire does it all.\n\nUse matches, lighters, ferro rods, or if you're a masochist, a bow drill. Fire = morale.`,
+
+      'basics-shelter': `SHELTER\n\nExposure kills faster than hunger. Build a tarp lean-to, snow cave, or dirt hovel. Anything is better than cuddling hypothermia.`,
+
+      'basics-food': `FOOD\n\nEat or be eaten (by hunger).\n\nTrap small game, forage for berries (the non-deadly kind), and fish like your ancestors. Pro tip: poison mushrooms are not a vibe.`,
+
+      threats: `THREATS\n\n- Natural: Earthquakes, floods, tornadoes, your mom.\n- Man-made: Nuclear fallout, angry mobs, billionaires with bunkers.\n- Animals: Bears, snakes, that goose from the park.`,
+
+      mental: `MENTAL SURVIVAL\n\nStay calm or die loud.\nYou need mental clarity to prioritize. Despair is a bigger killer than dehydration. Develop your grit or get out of the apocalypse.`,
+
+      tools: `TOOLS\n\n- Knife (for slicing, dicing, and intimidation)\n- Rope (for climbing or tying your sanity together)\n- Radios (for hearing how much worse it is elsewhere)\n- Power: solar, batteries, or the hamster wheel you built`,
+
+      store: `STORE\n\nComing soon:\nBuy the crap you didn’t know you needed to not die — knives, filters, kits, maybe even a glow-in-the-dark flask.`,
+
+      about: `ABOUT\n\nYou Didn’t Die is built by Nick.\nFueled by caffeine, sarcasm, and an unhealthy obsession with end-times preparedness.\nYou’re welcome.`
     };
 
-    const initLines = [
-      "Initializing sass core...",
-      "Compiling survival algorithms from YouTube and trauma...",
-      "Locating your last brain cell...",
-      "Loading nihilism.dll...",
-      "Injecting dark humor into terminal...",
-      "Decrypting encrypted stupidity...",
-      "Rewiring common sense (failed)...",
-      "Loading: sharp rocks and poor decisions...",
-      "Installing sarcasm module...",
-      "Wiping empathy... done.",
-      "Checking for hope... not found.",
-      "Generating illusion of control...",
-      "Synching with your disappointment...",
-      "Rebuilding ego... 404 ego not found."
-    ];
+    const nav = document.querySelector('nav');
+    const buttons = nav.querySelectorAll('button');
+    const content = document.getElementById('content');
+    const clickSound = document.getElementById('click-sound');
 
-    const nav = document.querySelector("nav");
-    const buttons = nav.querySelectorAll("button");
-    const content = document.getElementById("content");
-    const subnav = document.getElementById("basics-sub");
-
-    function setActive(button) {
-      buttons.forEach(btn => btn.classList.remove("active"));
-      button.classList.add("active");
+    function playClick() {
+      clickSound.currentTime = 0;
+      clickSound.play();
     }
 
-    nav.addEventListener("click", e => {
-      const target = e.target;
-      if (target.tagName === "BUTTON") {
-        const section = target.getAttribute("data-section");
-        if (CONTENT[section]) {
-          content.innerText = CONTENT[section];
-          setActive(target);
-          subnav.style.display = section === "basics" ? "block" : "none";
+    function setActive(button) {
+      buttons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+    }
+
+    function renderContent(section) {
+      const raw = CONTENT[section] || "404 Survival Tip Not Found";
+      const linked = raw.replace(/\[(.*?)\]\(#(.*?)\)/g, (_, text, link) =>
+        `<a href="#" data-section="${link}">${text}</a>`
+      );
+      content.innerHTML = linked;
+      content.scrollTop = 0;
+      content.focus();
+    }
+
+    nav.addEventListener('click', e => {
+      if (e.target.tagName === 'BUTTON') {
+        const section = e.target.getAttribute('data-section');
+        if (section && CONTENT[section]) {
+          playClick();
+          renderContent(section);
+          setActive(e.target);
         }
       }
     });
 
-    subnav.addEventListener("click", e => {
-      if (e.target.tagName === "A") {
+    content.addEventListener('click', e => {
+      if (e.target.tagName === 'A' && e.target.dataset.section) {
         e.preventDefault();
-        const sub = e.target.getAttribute("data-sub");
-        if (CONTENT[sub]) {
-          content.innerText = CONTENT[sub];
+        const section = e.target.dataset.section;
+        if (section && CONTENT[section]) {
+          playClick();
+          renderContent(section);
+          setActive([...buttons].find(b => b.dataset.section === section));
         }
       }
     });
 
-    // Boot sequence with stacked lines
+    // Boot sequence
     const boot = document.getElementById("boot");
-    const bootBar = document.getElementById("boot-bar");
-    const bootLines = document.getElementById("boot-lines");
+    const bar = document.getElementById("boot-bar");
+    const lines = document.getElementById("boot-lines");
 
-    let width = 0;
-    let lineIndex = 0;
+    const initLines = [
+      "Injecting caffeine into circuits...",
+      "Shaking the cosmic Magic 8-Ball...",
+      "Overclocking common sense...",
+      "Checking apocalypse bingo card...",
+      "Summoning sarcastic AI...",
+      "Polishing your doom...",
+      "Harvesting panic energy...",
+      "Loading the unbearable truth...",
+      "Tuning radio to 'screams of the damned'...",
+      "Upgrading your death denial firmware...",
+      "Installing updates you'll never use...",
+      "Sharpening sarcasm...",
+      "Downloading human error...",
+      "Preparing anti-zombie sarcasm launcher..."
+    ];
 
+    let percent = 0;
     const bootInterval = setInterval(() => {
-      if (width >= 100) {
+      if (percent >= 100) {
         clearInterval(bootInterval);
-        setTimeout(() => {
-          boot.style.display = "none";
-        }, 500);
+        boot.style.display = "none";
+        renderContent('start');
       } else {
-        width += 4;
-        bootBar.style.width = width + "%";
-
-        if (lineIndex < initLines.length) {
-          const line = document.createElement("div");
-          line.textContent = initLines[lineIndex++];
-          bootLines.appendChild(line);
-        }
+        percent += 3;
+        bar.style.width = percent + "%";
+        const line = document.createElement("div");
+        line.textContent = initLines[Math.floor(Math.random() * initLines.length)];
+        lines.appendChild(line);
+        if (lines.children.length > 15) lines.removeChild(lines.children[0]);
       }
     }, 100);
   </script>
