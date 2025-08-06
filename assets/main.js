@@ -1,36 +1,52 @@
 document.addEventListener("DOMContentLoaded", function () {
   const contentEl = document.getElementById("content");
-  const navLinks = document.querySelectorAll(".nav-button");
-
-  // Grab hash from URL
-  let page = window.location.hash.replace("#", "") || "fire";
-  loadPage(page);
-
-  // Handle nav clicks
-  navLinks.forEach((link) => {
-    link.addEventListener("click", function (e) {
-      e.preventDefault();
-      const targetPage = this.getAttribute("data-page");
-      if (!targetPage) return;
-      window.location.hash = targetPage;
-      loadPage(targetPage);
-
-      // Collapse nav on mobile
-      if (window.innerWidth < 768) {
-        document.body.classList.remove("nav-open");
-      }
-    });
-  });
-
-  // Hamburger toggle
+  const sidebar = document.querySelector("#sidebar nav");
   const menuToggle = document.getElementById("menu-toggle");
+
   if (menuToggle) {
     menuToggle.addEventListener("click", () => {
       document.body.classList.toggle("nav-open");
     });
   }
 
-  // Load markdown content
+  fetch("data/nav.json")
+    .then((res) => res.json())
+    .then((navData) => {
+      sidebar.innerHTML = ""; // Clear
+      navData.forEach((item) => {
+        const btn = document.createElement("button");
+        btn.classList.add("nav-button");
+        btn.setAttribute("data-page", item.page);
+        btn.innerText = item.label;
+        sidebar.appendChild(btn);
+      });
+
+      setupNavListeners(navData);
+      const page = window.location.hash.replace("#", "") || navData[0].page;
+      loadPage(page);
+    });
+
+  function setupNavListeners(navData) {
+    const navLinks = document.querySelectorAll(".nav-button");
+
+    navLinks.forEach((link) => {
+      link.addEventListener("click", function () {
+        const targetPage = this.getAttribute("data-page");
+        if (!targetPage) return;
+        window.location.hash = targetPage;
+        loadPage(targetPage);
+        if (window.innerWidth < 768) {
+          document.body.classList.remove("nav-open");
+        }
+      });
+    });
+
+    window.addEventListener("hashchange", function () {
+      const newPage = window.location.hash.replace("#", "") || navData[0].page;
+      loadPage(newPage);
+    });
+  }
+
   function loadPage(pageName) {
     fetch(`content/${pageName}.md`)
       .then((res) => {
@@ -47,8 +63,8 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
-  // Highlight nav button
   function highlightNav(activePage) {
+    const navLinks = document.querySelectorAll(".nav-button");
     navLinks.forEach((btn) => {
       if (btn.getAttribute("data-page") === activePage) {
         btn.classList.add("active");
@@ -59,10 +75,4 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
-
-  // Support hashchange navigation
-  window.addEventListener("hashchange", function () {
-    const newPage = window.location.hash.replace("#", "") || "fire";
-    loadPage(newPage);
-  });
 });
