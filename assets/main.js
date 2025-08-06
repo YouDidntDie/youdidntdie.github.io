@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return res.text();
       })
       .then((md) => {
-        contentEl.innerHTML = marked(md);
+        contentEl.innerHTML = marked.marked(md);
         highlightNav(pageName);
       })
       .catch((err) => {
