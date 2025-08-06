@@ -132,4 +132,10 @@ html, body {
   font-size: 1rem;
   line-height: 1.5;
 }
+#content img,
+#content pre {
+  max-width: 100%;
+  overflow-x: auto;
+  display: block;
+}
 }
