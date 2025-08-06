@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>You Didn’t Die \n\ How to survive? \n\ (if you absolutely must)</title>
+  <title>You Didn’t Die — Survival Guide</title>
   <style>
     :root {
       --green: #00ff00;
@@ -11,9 +11,11 @@
       --glow: 0 0 8px var(--green);
       --font: 'Courier New', Courier, monospace;
     }
+
     * {
       box-sizing: border-box;
     }
+
     body {
       margin: 0;
       height: 100vh;
@@ -25,6 +27,7 @@
       overflow: hidden;
       text-shadow: var(--glow);
     }
+
     header {
       padding: 0.8rem 1rem;
       border-bottom: 2px solid var(--green);
@@ -34,6 +37,7 @@
       box-shadow: inset 0 0 10px #004422;
       z-index: 2;
     }
+
     #container {
       flex-grow: 1;
       display: flex;
@@ -41,6 +45,7 @@
       position: relative;
       height: calc(100vh - 52px);
     }
+
     nav {
       width: 220px;
       background: #001a0d;
@@ -49,9 +54,16 @@
       flex-direction: column;
       box-shadow: inset 0 0 12px #004422;
       overflow-y: auto;
-      z-index: 1;
+      z-index: 10;
+      transition: transform 0.3s ease;
     }
-    nav button {
+
+    nav.collapsed {
+      transform: translateX(-100%);
+    }
+
+    nav button,
+    nav .sub-link {
       background: transparent;
       border: none;
       border-top: 1px solid var(--green);
@@ -63,23 +75,46 @@
       cursor: pointer;
       text-align: left;
       transition: background-color 0.25s ease;
+      width: 100%;
     }
+
     nav button:first-child {
       border-top: none;
     }
-    nav button:hover, nav button.active {
+
+    nav button:hover,
+    nav button.active,
+    nav .sub-link:hover,
+    nav .sub-link.active {
       background-color: #003322;
       box-shadow: var(--glow);
     }
+
     nav .sub-link {
       padding-left: 2.5rem;
       font-size: 0.95rem;
-      color: var(--green);
-      background: none;
-      border: none;
-      text-align: left;
-      cursor: pointer;
+      display: none;
     }
+
+    nav .submenu.open .sub-link {
+      display: block;
+    }
+
+    #toggle-nav {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 0.5rem 1rem;
+      background: #003322;
+      color: var(--green);
+      border: none;
+      font-family: var(--font);
+      font-size: 1rem;
+      z-index: 11;
+      border-bottom: 2px solid var(--green);
+    }
+
     main {
       flex-grow: 1;
       padding: 2rem;
@@ -91,11 +126,13 @@
       white-space: pre-wrap;
       position: relative;
     }
+
     a {
       color: var(--green);
       text-decoration: underline;
       cursor: pointer;
     }
+
     #boot {
       position: fixed;
       top: 0;
@@ -112,6 +149,7 @@
       z-index: 9999;
       font-size: 1rem;
     }
+
     #boot-bar-container {
       width: 80%;
       max-width: 600px;
@@ -120,11 +158,13 @@
       margin-top: 1rem;
       position: relative;
     }
+
     #boot-bar {
       height: 100%;
       width: 0%;
       background: limegreen;
     }
+
     #boot-lines {
       margin-top: 1rem;
       width: 100%;
@@ -132,32 +172,29 @@
       font-size: 0.75rem;
       line-height: 1.2;
     }
-    @media (max-width: 700px) {
+
+    @media (max-width: 768px) {
+      #toggle-nav {
+        display: block;
+      }
+
+      nav {
+        position: absolute;
+        height: 100%;
+        top: 0;
+        left: 0;
+        transform: translateX(-100%);
+      }
+
+      nav.open {
+        transform: translateX(0%);
+      }
+
       #container {
         flex-direction: column;
         height: auto;
       }
-      nav {
-        width: 100%;
-        height: auto;
-        border-right: none;
-        border-bottom: 2px solid var(--green);
-        flex-direction: row;
-        overflow-x: auto;
-      }
-      nav button {
-        flex: 1 0 auto;
-        padding: 0.8rem 1rem;
-        font-size: 1rem;
-        border-top: none;
-        border-bottom: none;
-        border-left: 1px solid var(--green);
-        border-right: 1px solid var(--green);
-        text-align: center;
-      }
-      nav button:first-child {
-        border-left: none;
-      }
+
       main {
         padding: 1rem;
       }
@@ -174,143 +211,139 @@
   </div>
 
   <header>You Didn’t Die — Survival Guide</header>
-
+  <button id="toggle-nav">☰ MENU</button>
   <div id="container">
-    <nav>
-      <button data-section="start" class="active">Now what?</button>
-      <button data-section="basics">Basics</button>
-      <button class="sub-link" data-section="basics-water">↳ Water</button>
-      <button class="sub-link" data-section="basics-fire">↳ Fire</button>
-      <button class="sub-link" data-section="basics-shelter">↳ Shelter</button>
-      <button class="sub-link" data-section="basics-food">↳ Food</button>
+    <nav id="sidebar">
+          <!-- Sidebar Navigation -->
+      <button class="nav-link" data-target="fire">🔥 How to Start a Fire</button>
+      <div class="submenu" id="submenu-fire">
+        <button class="sub-link" data-target="fire-basics">Basics</button>
+        <button class="sub-link" data-target="fire-wet">In Wet Conditions</button>
+      </div>
 
-      <button data-section="threats">Threats</button>
-      <button data-section="mental">Mental Survival</button>
-      <button data-section="tools">Tools</button>
-      <button data-section="store">Store</button>
-      <button data-section="about">About</button>
+      <button class="nav-link" data-target="anatomy">🧠 Human Anatomy</button>
+      <div class="submenu" id="submenu-anatomy">
+        <button class="sub-link" data-target="anatomy-overview">Overview</button>
+        <button class="sub-link" data-target="anatomy-critical">Critical Areas</button>
+      </div>
+
+      <button class="nav-link" data-target="gas">⛽ Siphon Gas</button>
+      <div class="submenu" id="submenu-gas">
+        <button class="sub-link" data-target="gas-tools">Tools</button>
+        <button class="sub-link" data-target="gas-safety">Safety Tips</button>
+      </div>
     </nav>
 
-    <main id="content" tabindex="0" aria-live="polite">
-      Welcome to <b>You Didn’t Die</b>.  
-      Your survival bible awaits.  
-      Select a section to get started.
+    <!-- Main Content -->
+    <main id="main-content">
+      <h1>Welcome to the Survival Guide</h1>
+      <p>Pick your poison from the menu to learn how to not die. At least not *today*.</p>
     </main>
   </div>
 
-  <audio id="click-sound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
-
   <script>
-    const CONTENT = {
-  start: `So you didn't die. Now what?\n\n everyone around is dying or is already dead. \n\n But not you, you unlucky bastard. You can curl up like a little bitch and cry or get this handy guide to help you be miserable for another day.`,
-
-  basics: `Basics:\nChoose a topic:\n- [Water](#basics-water)\n- [Fire](#basics-fire)\n- [Shelter](#basics-shelter)\n- [Food](#basics-food)`,
-
-  'basics-water': `WATER\n\nWater is life. No, seriously. You can last three weeks without food, but only three days without water—less if you're sweating bullets or shitting your guts out.\n\nHere’s how not to die of thirst:\n\n1. **Find It:**\n   - Look for streams, rivers, lakes. Avoid stagnant puddles unless you're cool with diarrhea roulette.\n   - Collect rainwater — it's sky juice, mostly safe.\n   - Morning dew? Lick it off leaves like a desperate raccoon.\n\n2. **Clean It:**\n   - **Boil it.** Bring to a rolling boil for at least 1 minute (3 at high altitudes). If you're too lazy, enjoy your intestinal parasites.\n   - **Filter it.** Use a survival filter or make one with charcoal, sand, and cloth. Don’t trust your gut? Neither should you.\n   - **Chemical treatment.** Iodine tablets, bleach (2 drops per liter, no more unless you're into bleach cocktails), or chlorine dioxide tabs.\n\n3. **Store It:**\n   - Use clean containers. Not the one you peed in, genius.\n   - Seal tight. Bugs, dirt, and whatever the hell that is floating in there? Not welcome.\n\n4. **Avoid Losing It:**\n   - Stay in the shade.\n   - Don’t guzzle water like a frat boy — sip.\n   - Pee yellow? Fine. Pee dark orange? Panic.\n\n💀 **Fun Fact:** Dehydration can make you hallucinate. So if your water bottle starts talking, you're not enlightened — you're dying.\n\nNext: [Fire](#basics-fire), because being hydrated while freezing to death is lame.`,
-
-  'basics-fire': `FIRE\n\nWarmth, light, cooked food, and monster deterrent. Fire does it all.\n\nUse matches, lighters, ferro rods, or if you're a masochist, a bow drill. Fire = morale.`,
-
-  'basics-shelter': `SHELTER\n\nExposure kills faster than hunger. Build a tarp lean-to, snow cave, or dirt hovel. Anything is better than cuddling hypothermia.`,
-
-  'basics-food': `FOOD\n\nEat or be eaten (by hunger).\n\nTrap small game, forage for berries (the non-deadly kind), and fish like your ancestors. Pro tip: poison mushrooms are not a vibe.`,
-
-  threats: `THREATS\n\n- Natural: Earthquakes, floods, tornadoes, your mom.\n- Man-made: Nuclear fallout, angry mobs, billionaires with bunkers.\n- Animals: Bears, snakes, that goose from the park.`,
-
-  mental: `MENTAL SURVIVAL\n\nStay calm or die loud.\nYou need mental clarity to prioritize. Despair is a bigger killer than dehydration. Develop your grit or get out of the apocalypse.`,
-
-  tools: `TOOLS\n\n- Knife (for slicing, dicing, and intimidation)\n- Rope (for climbing or tying your sanity together)\n- Radios (for hearing how much worse it is elsewhere)\n- Power: solar, batteries, or the hamster wheel you built`,
-
-  store: `STORE\n\nComing soon:\nBuy the crap you didn’t know you needed to not die — knives, filters, kits, maybe even a glow-in-the-dark flask.`,
-
-  about: `ABOUT\n\nYou Didn’t Die is built by Nick.\nFueled by caffeine, sarcasm, and an unhealthy obsession with end-times preparedness.\nYou’re welcome.`
-};
-
-
-    const nav = document.querySelector('nav');
-    const buttons = nav.querySelectorAll('button');
-    const content = document.getElementById('content');
-    const clickSound = document.getElementById('click-sound');
-
-    function playClick() {
-      clickSound.currentTime = 0;
-      clickSound.play();
-    }
-
-    function setActive(button) {
-      buttons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-    }
-
-    function renderContent(section) {
-      const raw = CONTENT[section] || "404 Survival Tip Not Found";
-      const linked = raw.replace(/\[(.*?)\]\(#(.*?)\)/g, (_, text, link) =>
-        `<a href="#" data-section="${link}">${text}</a>`
-      );
-      content.innerHTML = linked;
-      content.scrollTop = 0;
-      content.focus();
-    }
-
-    nav.addEventListener('click', e => {
-      if (e.target.tagName === 'BUTTON') {
-        const section = e.target.getAttribute('data-section');
-        if (section && CONTENT[section]) {
-          playClick();
-          renderContent(section);
-          setActive(e.target);
-        }
-      }
-    });
-
-    content.addEventListener('click', e => {
-      if (e.target.tagName === 'A' && e.target.dataset.section) {
-        e.preventDefault();
-        const section = e.target.dataset.section;
-        if (section && CONTENT[section]) {
-          playClick();
-          renderContent(section);
-          setActive([...buttons].find(b => b.dataset.section === section));
-        }
-      }
-    });
-
-    // Boot sequence
-    const boot = document.getElementById("boot");
-    const bar = document.getElementById("boot-bar");
-    const lines = document.getElementById("boot-lines");
-
-    const initLines = [
-      "Injecting caffeine into circuits...",
-      "Shaking the cosmic Magic 8-Ball...",
-      "Overclocking common sense...",
-      "Checking apocalypse bingo card...",
-      "Summoning sarcastic AI...",
-      "Polishing your doom...",
-      "Harvesting panic energy...",
-      "Loading the unbearable truth...",
-      "Tuning radio to 'screams of the damned'...",
-      "Upgrading your death denial firmware...",
-      "Installing updates you'll never use...",
-      "Sharpening sarcasm...",
-      "Downloading human error...",
-      "Preparing anti-zombie sarcasm launcher..."
+    // Boot loading animation
+    const bootLines = [
+      "Initializing reality...",
+      "Downloading hope.exe... failed",
+      "Installing caffeine patch...",
+      "Verifying meatbag status...",
+      "Compiling sarcasm module...",
+      "Survival OS ready. Good luck, idiot."
     ];
 
-    let percent = 0;
-    const bootInterval = setInterval(() => {
-      if (percent >= 100) {
-        clearInterval(bootInterval);
-        boot.style.display = "none";
-        renderContent('start');
-      } else {
-        percent += 3;
-        bar.style.width = percent + "%";
+    let currentLine = 0;
+    let bootBar = document.getElementById("boot-bar");
+    let bootLinesContainer = document.getElementById("boot-lines");
+
+    function showBootLine() {
+      if (currentLine < bootLines.length) {
         const line = document.createElement("div");
-        line.textContent = initLines[Math.floor(Math.random() * initLines.length)];
-        lines.appendChild(line);
-        if (lines.children.length > 15) lines.removeChild(lines.children[0]);
+        line.textContent = bootLines[currentLine];
+        bootLinesContainer.appendChild(line);
+        currentLine++;
+        setTimeout(showBootLine, 400);
+      }
+    }
+
+    let progress = 0;
+    const bootInterval = setInterval(() => {
+      progress += 2;
+      bootBar.style.width = progress + "%";
+      if (progress >= 100) {
+        clearInterval(bootInterval);
+        setTimeout(() => {
+          document.getElementById("boot").style.display = "none";
+        }, 500);
       }
     }, 100);
+    showBootLine();
+
+    // Nav logic
+    const navLinks = document.querySelectorAll('.nav-link');
+    const subLinks = document.querySelectorAll('.sub-link');
+    const sidebar = document.getElementById('sidebar');
+    const toggleNav = document.getElementById('toggle-nav');
+    const mainContent = document.getElementById('main-content');
+
+    function closeSidebarOnMobile() {
+      if (window.innerWidth <= 768) {
+        sidebar.classList.remove('open');
+      }
+    }
+
+    function clearActiveStates() {
+      navLinks.forEach(btn => btn.classList.remove('active'));
+      subLinks.forEach(btn => btn.classList.remove('active'));
+    }
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        const submenuId = `submenu-${link.dataset.target}`;
+        const submenu = document.getElementById(submenuId);
+
+        document.querySelectorAll('.submenu').forEach(menu => {
+          if (menu !== submenu) {
+            menu.classList.remove('open');
+          }
+        });
+
+        submenu.classList.toggle('open');
+        clearActiveStates();
+        link.classList.add('active');
+        mainContent.innerHTML = `<h2>${link.textContent}</h2><p>Loading…</p>`;
+        closeSidebarOnMobile();
+      });
+    });
+
+    subLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        clearActiveStates();
+        link.classList.add('active');
+        const contentId = link.dataset.target;
+        loadContent(contentId);
+        closeSidebarOnMobile();
+      });
+    });
+
+    function loadContent(section) {
+      // Dummy content — replace with real data logic or Markdown fetch
+      const contentMap = {
+        "fire-basics": "<h2>🔥 Fire Basics</h2><p>Use dry wood, a spark, and don't breathe too hard or you'll pass out before ignition.</p>",
+        "fire-wet": "<h2>🔥 Wet Fire Starting</h2><p>Use inner bark or waterproof matches. Pray to fire gods optional.</p>",
+        "anatomy-overview": "<h2>🧠 Human Overview</h2><p>You're 60% water and 40% trauma. Here's where it all fits together.</p>",
+        "anatomy-critical": "<h2>🧠 Critical Areas</h2><p>Head, heart, lungs. You know — the soft squishy bits you want to keep intact.</p>",
+        "gas-tools": "<h2>⛽ Tools for Gas Siphoning</h2><p>You’ll need a hose, container, and a complete disregard for the rules.</p>",
+        "gas-safety": "<h2>⛽ Safety Tips</h2><p>Don’t smoke, spark, or spontaneously combust. That’s it. That’s the tip.</p>"
+      };
+
+      mainContent.innerHTML = contentMap[section] || "<h2>Error</h2><p>404: Brain not found.</p>";
+    }
+
+    // Toggle sidebar
+    toggleNav.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+    });
   </script>
 </body>
 </html>
