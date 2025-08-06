@@ -72,7 +72,7 @@ header {
   border-bottom: 1px solid var(--green);
   color: var(--green);
   font-size: 1rem;
-  text-align: left;
+  text-align: center;
   box-sizing: border-box;
   cursor: pointer;
   transition: background 0.2s ease;
