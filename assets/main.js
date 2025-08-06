@@ -1,116 +1,61 @@
-document.addEventListener("DOMContentLoaded", () => {
+// main.js
+
+document.addEventListener("DOMContentLoaded", function () {
   const contentEl = document.getElementById("content");
-  const navEl = document.querySelector("nav");
-  const clickSound = document.getElementById("click-sound");
+  const navLinks = document.querySelectorAll(".nav-button");
 
-  // Load navigation
-  fetch("data/nav.json")
-    .then((res) => res.json())
-    .then((navData) => {
-      navEl.innerHTML = ""; // Clear nav before rebuilding
-      buildNav(navData);
-      handleHashChange(); // Load the section if there's a hash
-    });
+  // Grab the hash part from URL
+  let page = window.location.hash.replace("#", "") || "fire";
+  loadPage(page);
 
-  function buildNav(navData) {
-    navData.forEach((item) => {
-      const btn = createNavButton(item.title, item.section, false);
-      navEl.appendChild(btn);
-
-      if (item.sub && item.sub.length) {
-        const subContainer = document.createElement("div");
-        subContainer.classList.add("sub-menu");
-
-        item.sub.forEach((subItem) => {
-          const subBtn = createNavButton(subItem.title, subItem.section, true);
-          subContainer.appendChild(subBtn);
-        });
-
-        navEl.appendChild(subContainer);
+  // Handle nav clicks
+  navLinks.forEach((link) => {
+    link.addEventListener("click", function (e) {
+      e.preventDefault();
+      const targetPage = this.getAttribute("data-page");
+      if (!targetPage) return;
+      window.location.hash = targetPage;
+      loadPage(targetPage);
+      // Collapse nav if mobile
+      if (window.innerWidth < 768) {
+        document.body.classList.remove("nav-open");
       }
     });
+  });
 
-    navEl.addEventListener("click", (e) => {
-      const button = e.target.closest("button[data-section]");
-      if (!button) return;
-
-      const section = button.dataset.section;
-      if (section) {
-        location.hash = section;
-        if (window.innerWidth < 700) toggleNav(false); // close sidebar on mobile
-      }
-    });
-  }
-
-  function createNavButton(title, section, isSub = false) {
-    const btn = document.createElement("button");
-    btn.textContent = isSub ? "↳ " + title : title;
-    btn.dataset.section = section;
-    btn.classList.add(isSub ? "sub-link" : "nav-link");
-    return btn;
-  }
-
-  function handleHashChange() {
-    const section = location.hash?.replace("#", "") || "start";
-    loadSection(section);
-    highlightActive(section);
-    expandSubMenu(section);
-  }
-
-  function loadSection(section) {
-    fetch(`content/${section}.md`)
+  // Load the Markdown file
+  function loadPage(pageName) {
+    fetch(`content/${pageName}.md`)
       .then((res) => {
-        if (!res.ok) throw new Error("Content not found");
+        if (!res.ok) throw new Error("404: Markdown not found.");
         return res.text();
       })
-      .then((markdown) => {
-        contentEl.innerHTML = marked.parse(markdown);
-        contentEl.scrollTop = 0;
-        contentEl.focus();
-        playClick();
+      .then((md) => {
+        contentEl.innerHTML = marked(md);
+        highlightNav(pageName);
       })
-      .catch(() => {
-        contentEl.innerHTML = "<h2>404 Survival Tip Not Found</h2>";
+      .catch((err) => {
+        contentEl.innerHTML = `<h2>Page Not Found</h2><p>${err.message}</p>`;
+        highlightNav(null);
       });
   }
 
-  function highlightActive(section) {
-    const buttons = navEl.querySelectorAll("button[data-section]");
-    buttons.forEach((btn) => {
-      btn.classList.toggle("active", btn.dataset.section === section);
+  // Highlight the active page in nav
+  function highlightNav(activePage) {
+    navLinks.forEach((btn) => {
+      if (btn.getAttribute("data-page") === activePage) {
+        btn.classList.add("active");
+        btn.setAttribute("aria-current", "page");
+      } else {
+        btn.classList.remove("active");
+        btn.removeAttribute("aria-current");
+      }
     });
   }
 
-  function expandSubMenu(section) {
-    const allSubMenus = navEl.querySelectorAll(".sub-menu");
-    allSubMenus.forEach((sub) => (sub.style.display = "none"));
-
-    const activeBtn = navEl.querySelector(`button[data-section="${section}"]`);
-    if (activeBtn && activeBtn.classList.contains("sub-link")) {
-      const subMenu = activeBtn.closest(".sub-menu");
-      if (subMenu) subMenu.style.display = "block";
-    }
-  }
-
-  function playClick() {
-    if (!clickSound) return;
-    clickSound.currentTime = 0;
-    clickSound.play();
-  }
-
-  window.addEventListener("hashchange", handleHashChange);
-
-  // Mobile nav toggle (optional — you'd need a toggle button in HTML)
-  const navToggleBtn = document.getElementById("nav-toggle");
-  if (navToggleBtn) {
-    navToggleBtn.addEventListener("click", () => {
-      toggleNav();
-    });
-  }
-
-  function toggleNav(forceState = null) {
-    const isOpen = navEl.classList.contains("open");
-    const shouldOpen = forceState !== null ? forceState : !isOpen;
-    navEl.classList.toggle("open", shouldOpen);
-  }
+  // Optional: Live hash change support
+  window.addEventListener("hashchange", function () {
+    const newPage = window.location.hash.replace("#", "") || "fire";
+    loadPage(newPage);
+  });
 });
