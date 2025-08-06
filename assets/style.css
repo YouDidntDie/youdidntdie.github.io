@@ -141,7 +141,7 @@ a {
 }
 
 /* 🔄 Responsive Adjustments */
-@media (max-width: 768px) {
+@media (max-width: 768px), (orientation: portrait) {
   #container {
     flex-direction: column;
   }
@@ -157,9 +157,17 @@ a {
   }
 
   #sidebar button {
-    flex: 1;
+    flex: 1 0 auto;
+    min-width: 100px;
+    padding: 0.8rem;
     border-bottom: none;
     border-right: 1px solid var(--green);
     text-align: center;
+    white-space: nowrap;
   }
+
+  #sidebar button:last-child {
+    border-right: none;
+  }
+}
 }
