@@ -48,7 +48,6 @@ header {
   overflow: hidden;
   height: 100%;
 }
-
 #sidebar {
   width: 240px;
   background: #001a0d;
@@ -56,17 +55,26 @@ header {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease;
-  z-index: 5;
+  padding: 0;
+}
+
+#sidebar nav {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 #sidebar button {
   all: unset;
-  cursor: pointer;
+  display: block;
+  width: 100%;
   padding: 1rem;
   border-bottom: 1px solid var(--green);
   color: var(--green);
   font-size: 1rem;
+  text-align: left;
+  box-sizing: border-box;
+  cursor: pointer;
   transition: background 0.2s ease;
 }
 
@@ -75,7 +83,6 @@ header {
   background: #003322;
   box-shadow: var(--glow);
 }
-
 main {
   flex-grow: 1;
   padding: 2rem;
