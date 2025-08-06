@@ -7,39 +7,26 @@
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
-  <!-- Hamburger button for mobile -->
-  <button id="menu-toggle" aria-label="Toggle menu" class="hamburger">
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
+  <header>
+    <button id="menu-toggle" aria-label="Toggle menu">☰</button>
+    You Didn’t Die — Survival Guide
+  </header>
 
-  <!-- Header -->
-  <header>You Didn’t Die — Survival Guide</header>
-
-  <!-- Container with Sidebar + Main -->
   <div id="container">
     <aside id="sidebar">
-      <nav>
-        <button class="nav-button" data-page="fire">🔥 Fire</button>
-        <button class="nav-button" data-page="anatomy">🫀 Anatomy</button>
-        <button class="nav-button" data-page="siphon-gas">⛽ Gas Theft</button>
-      </nav>
+      <nav></nav>
     </aside>
     <main id="content" tabindex="0" aria-live="polite">Loading…</main>
   </div>
 
-  <!-- Boot screen -->
   <div id="boot-screen">
     <div id="boot-text">Booting survival protocol...</div>
     <div id="boot-bar-container"><div id="boot-bar"></div></div>
     <div id="boot-lines"></div>
   </div>
 
-  <!-- Sounds -->
   <audio id="click-sound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
-
-  <!-- Scripts -->
+  
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="assets/main.js"></script>
 </body>
