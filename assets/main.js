@@ -1,10 +1,8 @@
-// main.js
-
 document.addEventListener("DOMContentLoaded", function () {
   const contentEl = document.getElementById("content");
   const navLinks = document.querySelectorAll(".nav-button");
 
-  // Grab the hash part from URL
+  // Grab hash from URL
   let page = window.location.hash.replace("#", "") || "fire";
   loadPage(page);
 
@@ -16,14 +14,23 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!targetPage) return;
       window.location.hash = targetPage;
       loadPage(targetPage);
-      // Collapse nav if mobile
+
+      // Collapse nav on mobile
       if (window.innerWidth < 768) {
         document.body.classList.remove("nav-open");
       }
     });
   });
 
-  // Load the Markdown file
+  // Hamburger toggle
+  const menuToggle = document.getElementById("menu-toggle");
+  if (menuToggle) {
+    menuToggle.addEventListener("click", () => {
+      document.body.classList.toggle("nav-open");
+    });
+  }
+
+  // Load markdown content
   function loadPage(pageName) {
     fetch(`content/${pageName}.md`)
       .then((res) => {
@@ -31,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return res.text();
       })
       .then((md) => {
-        contentEl.innerHTML = marked.marked(md);
+        contentEl.innerHTML = marked.parse(md);
         highlightNav(pageName);
       })
       .catch((err) => {
@@ -40,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
-  // Highlight the active page in nav
+  // Highlight nav button
   function highlightNav(activePage) {
     navLinks.forEach((btn) => {
       if (btn.getAttribute("data-page") === activePage) {
@@ -53,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Optional: Live hash change support
+  // Support hashchange navigation
   window.addEventListener("hashchange", function () {
     const newPage = window.location.hash.replace("#", "") || "fire";
     loadPage(newPage);
