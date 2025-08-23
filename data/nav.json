@@ -1,14 +1,7 @@
 [
-  { "label": "Now what?", "section": "start" },
-  { "label": "Basics", "section": "basics", "children": [
-      { "label": "Water", "section": "basics-water" },
-      { "label": "Fire", "section": "basics-fire" },
-      { "label": "Shelter", "section": "basics-shelter" },
-      { "label": "Food", "section": "basics-food" }
-  ]},
-  { "label": "Threats", "section": "threats" },
-  { "label": "Mental Survival", "section": "mental" },
-  { "label": "Tools", "section": "tools" },
-  { "label": "Store", "section": "store" },
-  { "label": "About", "section": "about" }
+  { "label": "Home", "link": "index.html" },
+  { "label": "Survival Guide", "link": "guide.html" },
+  { "label": "Supplies", "link": "supplies.html" },
+  { "label": "Encyclopedia", "link": "encyclopedia.html" },
+  { "label": "Contact", "link": "contact.html" }
 ]
