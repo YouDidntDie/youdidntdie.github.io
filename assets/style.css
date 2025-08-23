@@ -1,81 +1,49 @@
+/* Terminal look */
 body {
-  font-family: monospace;
   margin: 0;
-  background: black;
-  color: limegreen;
-}
-
-#menu-toggle {
-  position: fixed;
-  top: 1rem;
-  left: 1rem;
-  padding: 0.5rem 1rem;
-  background: black;
-  color: limegreen;
-  border: 1px solid limegreen;
-  cursor: pointer;
-  z-index: 1001;
-}
-
-.drawer {
-  position: fixed;
-  top: 0;
-  left: -250px; /* hidden by default */
-  width: 250px;
-  height: 100%;
-  background: black;
-  border-right: 1px solid limegreen;
-  padding-top: 3rem;
-  transition: left 0.3s ease;
-  z-index: 1000;
-}
-
-.drawer.open {
-  left: 0;
-}
-
-#nav-container {
-  display: flex;
-  flex-direction: column; /* stack vertically */
-  align-items: stretch;   /* force equal widths */
-  width: 200px;           /* pick a consistent width */
-  margin: 0 auto;         /* center container if needed */
-}
-
-.nav-button {
-  display: block;
-  width: 100%;            /* same width as container */
-  padding: 12px;
-  margin: 4px 0;
-  background: #111;
-  color: #0f0;
-  border: 2px solid #0f0;
   font-family: monospace;
+  background: black;
+  color: #00ff00;
+}
+
+/* Layout */
+.terminal {
+  display: flex;
+  height: 100vh;
+}
+
+/* Sidebar navigation */
+.sidebar {
+  width: 200px;
+  background: #111;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+
+/* Buttons */
+.nav-btn {
+  background: black;
+  color: #00ff00;
+  border: 2px solid #00ff00;
+  padding: 12px;
+  font-size: 16px;
   cursor: pointer;
   text-align: center;
+  width: 100%;
+  transition: background 0.2s, color 0.2s;
 }
 
-.nav-button:hover {
-  background: #0f0;
-  color: #111;
-}
-#nav-links {
-  display: flex;
-  flex-direction: column; /* force stacking */
-}
-
-#nav-links button {
-  width: 100%;             /* full width */
-  padding: 1rem;
-  border: none;
-  background: black;
-  color: limegreen;
-  text-align: left;
-  cursor: pointer;
-  border-bottom: 1px solid limegreen;
-}
-
-#nav-links button:hover {
-  background: limegreen;
+.nav-btn:hover {
+  background: #00ff00;
   color: black;
+}
+
+/* Main content */
+.main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
 }
