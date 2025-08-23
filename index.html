@@ -2,32 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>You Didn’t Die — Survival Guide</title>
-  <link rel="stylesheet" href="assets/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>You Didn’t Die</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <button id="menu-toggle" aria-label="Toggle menu">☰</button>
-    You Didn’t Die — Survival Guide
-  </header>
-
-  <div id="container">
-    <aside id="sidebar">
-      <nav></nav>
-    </aside>
-    <main id="content" tabindex="0" aria-live="polite">Loading…</main>
-  </div>
-
-  <div id="boot-screen">
-    <div id="boot-text">Booting survival protocol...</div>
-    <div id="boot-bar-container"><div id="boot-bar"></div></div>
-    <div id="boot-lines"></div>
-  </div>
-
-  <audio id="click-sound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
-  
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script src="assets/main.js"></script>
+  <button id="menu-toggle">☰ Menu</button>
+  <nav id="drawer" class="drawer">
+    <div id="nav-links"></div>
+  </nav>
+  <main>
+    <h1>Welcome Survivor</h1>
+    <p>This is your sarcastic, bleak survival guide.</p>
+  </main>
+  <script src="script.js"></script>
 </body>
 </html>
