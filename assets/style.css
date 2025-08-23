@@ -34,6 +34,31 @@ body {
   left: 0;
 }
 
+#nav-container {
+  display: flex;
+  flex-direction: column; /* stack vertically */
+  align-items: stretch;   /* force equal widths */
+  width: 200px;           /* pick a consistent width */
+  margin: 0 auto;         /* center container if needed */
+}
+
+.nav-button {
+  display: block;
+  width: 100%;            /* same width as container */
+  padding: 12px;
+  margin: 4px 0;
+  background: #111;
+  color: #0f0;
+  border: 2px solid #0f0;
+  font-family: monospace;
+  cursor: pointer;
+  text-align: center;
+}
+
+.nav-button:hover {
+  background: #0f0;
+  color: #111;
+}
 #nav-links {
   display: flex;
   flex-direction: column; /* force stacking */
