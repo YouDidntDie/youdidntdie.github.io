@@ -3,6 +3,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const sidebarNav = document.querySelector("#sidebar nav");
   const menuToggle = document.getElementById("menu-toggle");
 
+  // start boot animation immediately
+runBoot();
+
+// hide boot only after content finishes loading OR after failsafe
+
   // BOOT FAILSAFE: never allow infinite loader
 setTimeout(() => {
   const boot = document.getElementById("boot");
