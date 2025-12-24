@@ -10,6 +10,10 @@ setTimeout(() => {
   console.warn("[YDD] Boot timeout triggered (something failed to load).");
 }, 3000);
   
+// absolute failsafe: never infinite boot
+if (boot) {
+  setTimeout(() => boot.classList.add("hidden"), 2000);
+}
   // Loud errors instead of mysterious nothingness
   function die(msg, extra = "") {
     console.error("[YDD]", msg, extra);
