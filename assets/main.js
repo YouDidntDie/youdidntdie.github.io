@@ -3,6 +3,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const sidebarNav = document.querySelector("#sidebar nav");
   const menuToggle = document.getElementById("menu-toggle");
 
+  // BOOT FAILSAFE: never allow infinite loader
+setTimeout(() => {
+  const boot = document.getElementById("boot");
+  if (boot) boot.classList.add("hidden");
+  console.warn("[YDD] Boot timeout triggered (something failed to load).");
+}, 3000);
+  
   // Loud errors instead of mysterious nothingness
   function die(msg, extra = "") {
     console.error("[YDD]", msg, extra);
