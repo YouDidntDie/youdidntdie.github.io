@@ -1,24 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>You Didn’t Die</title>
-  <link rel="stylesheet" href="assets/style.css">
+
+  <link rel="stylesheet" href="assets/style.css" />
+
+  <!-- Marked (Markdown -> HTML) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-  <div class="terminal">
-    <div class="sidebar">
-      <button class="nav-btn">Home</button>
-      <button class="nav-btn">Encyclopedia</button>
-      <button class="nav-btn">Survival Store</button>
-      <button class="nav-btn">About</button>
-    </div>
-    <div class="main">
-      <h1>Welcome to You Didn’t Die</h1>
-      <p>Because somehow you’re still breathing.</p>
+
+  <!-- Boot screen (optional but recommended) -->
+  <div id="boot" class="boot">
+    <div class="boot-inner">
+      <div class="boot-title">YOU DIDN’T DIE</div>
+      <div class="boot-sub">Initializing survival-grade disappointment…</div>
+      <div id="boot-lines" class="boot-lines"></div>
+      <div class="boot-bar"><div class="boot-fill" id="boot-fill"></div></div>
     </div>
   </div>
+
+  <button id="menu-toggle" class="menu-toggle" aria-label="Toggle menu">☰</button>
+
+  <div class="terminal">
+    <aside id="sidebar" class="sidebar">
+      <nav></nav>
+    </aside>
+
+    <main id="content" class="main">
+      <!-- content injected here -->
+    </main>
+  </div>
+
   <script src="assets/main.js"></script>
 </body>
 </html>
