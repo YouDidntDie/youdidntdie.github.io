@@ -1,8 +1,8 @@
 [
   { "label": "Home", "page": "Basics" },
   { "label": "Basics", "page": "Basics" },
-  { "label": "Anatomy", "page": "anatomy" },
-  { "label": "Fire", "page": "fire" },
-  { "label": "Basics: Fire", "page": "basics-fire" },
-  { "label": "Siphon Gas", "page": "siphon-gas" }
+  { "label": "anatomy", "page": "anatomy" },
+  { "label": "fire", "page": "fire" },
+  { "label": "basics: Fire", "page": "basics-fire" },
+  { "label": "siphon Gas", "page": "siphon-gas" }
 ]
