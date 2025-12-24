@@ -71,4 +71,41 @@
     transform: translateY(0);
     pointer-events:auto;
   }
+  .terminal{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns: 240px 1fr;
+  gap:16px;
+  padding:16px;
+}
+
+#sidebar, .sidebar{
+  background: rgba(0,0,0,.7);
+  border:1px solid rgba(0,255,102,.35);
+  border-radius:12px;
+  padding:12px;
+  box-shadow: var(--glow);
+}
+
+#sidebar nav{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+#content, .main{
+  background: rgba(0,0,0,.7);
+  border:1px solid rgba(0,255,102,.35);
+  border-radius:12px;
+  padding:18px;
+  box-shadow: var(--glow);
+  overflow:auto;
+}
+
+@media (max-width: 800px){
+  .terminal{ grid-template-columns: 1fr; }
+  #sidebar{ position:fixed; top:56px; left:12px; right:12px; z-index:40; }
+  body:not(.nav-open) #sidebar{ display:none; }
+}
+
 }
