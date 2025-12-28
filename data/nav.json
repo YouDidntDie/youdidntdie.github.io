@@ -1,7 +1,6 @@
 [
-  { "label": "Basics", "page": "Basics" },
-  { "label": "anatomy", "page": "anatomy" },
-  { "label": "fire", "page": "fire" },
-  { "label": "basics: Fire", "page": "basics-fire" },
-  { "label": "siphon Gas", "page": "siphon-gas" }
+  { "id": "home", "label": "HOME", "file": "home.md" },
+  { "id": "guide", "label": "SURVIVAL GUIDE", "file": "guide.md" },
+  { "id": "encyclopedia", "label": "ENCYCLOPEDIA", "file": "encyclopedia.md" },
+  { "id": "supplies", "label": "SUPPLIES", "file": "supplies.md" }
 ]
