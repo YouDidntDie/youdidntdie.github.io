@@ -1,39 +1,47 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>You Didn’t Die</title>
-
-  <link rel="stylesheet" href="assets/style.css" />
-
-  <!-- Marked (Markdown -> HTML) -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
 
-  <!-- Boot screen (optional but recommended) -->
+  <!-- BOOT SCREEN -->
   <div id="boot" class="boot">
     <div class="boot-inner">
       <div class="boot-title">YOU DIDN’T DIE</div>
-      <div class="boot-sub">Initializing survival-grade disappointment…</div>
-      <div id="boot-lines" class="boot-lines"></div>
-      <div class="boot-bar"><div class="boot-fill" id="boot-fill"></div></div>
+      <div class="boot-sub">Booting survival interface…</div>
+
+      <div class="boot-bar">
+        <div id="boot-progress" class="boot-progress"></div>
+      </div>
+
+      <div id="boot-lines" class="boot-lines" aria-live="polite"></div>
     </div>
   </div>
 
-  <button id="menu-toggle" class="menu-toggle" aria-label="Toggle menu">☰</button>
+  <!-- APP -->
+  <div id="app" class="app" aria-hidden="true">
+    <header class="topbar">
+      <button id="menu-toggle" class="menu-btn" aria-label="Open menu">☰</button>
+      <div class="brand">YDD // Survival Interface</div>
+    </header>
 
-  <div class="terminal">
-    <aside id="sidebar" class="sidebar">
-      <nav></nav>
+    <aside id="sidebar" class="sidebar" aria-hidden="true">
+      <nav id="nav"></nav>
     </aside>
 
-    <main id="content" class="main">
-      <!-- content injected here -->
+    <main id="content" class="content" tabindex="0">
+      <!-- injected markdown -->
     </main>
+
+    <div id="scrim" class="scrim" aria-hidden="true"></div>
   </div>
 
-  <script src="assets/main.js"></script>
+  <script src="assets/js/boot.js" defer></script>
+  <script src="assets/js/content.js" defer></script>
+  <script src="assets/js/nav.js" defer></script>
 </body>
 </html>
